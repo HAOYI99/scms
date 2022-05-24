@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "512654234206",
+    "project_id": "scms-a20fc",
+    "storage_bucket": "scms-a20fc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:512654234206:android:7fdae4c230138725a2dacf",
+        "android_client_info": {
+          "package_name": "com.project.scms"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "512654234206-dtgds12htrm2ldrlums7bogg97nf0eqo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.project.scms",
+            "certificate_hash": "1cec12c2fe575f2a5f134ddafe0bb916e7047eaa"
+          }
+        },
+        {
+          "client_id": "512654234206-08518uphonh4qk7l8vhplmendab6msfu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfdCzT2OOLZBeqyQI56D_8rw_37FNpmMo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "512654234206-08518uphonh4qk7l8vhplmendab6msfu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
