@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:scms/view/screen_detail.dart';
+import 'package:scms/view/detail_page.dart';
 
-class screenHome extends StatefulWidget {
-  screenHome({Key? key}) : super(key: key);
+class HomePage extends StatefulWidget {
+  HomePage({Key? key}) : super(key: key);
 
   @override
-  State<screenHome> createState() => _screenHomeState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _screenHomeState extends State<screenHome> {
+class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,23 +35,6 @@ class _screenHomeState extends State<screenHome> {
                       ),
                     ],
                   ),
-                  // SizedBox(
-                  //   height: 20.0,
-                  // ),
-                  // Container(
-                  //   height: 40.0,
-                  //   child: ListView(
-                  //     scrollDirection: Axis.horizontal,
-                  //     children: <Widget>[
-                  //       buildTopChip('test', true),
-                  //       buildTopChip('test', false),
-                  //       buildTopChip('test', false),
-                  //       buildTopChip('test', false),
-                  //       buildTopChip('test', false),
-                  //       buildTopChip('test', false),
-                  //     ],
-                  //   ),
-                  // ),
                 ],
               ),
             ),
