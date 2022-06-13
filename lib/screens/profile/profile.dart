@@ -66,7 +66,7 @@ class _ProfileState extends State<Profile> {
                                   ),
                                 ),
                                 onTap: () {
-                                  _showEditPanel(userData.user_email!, userData);
+                                  _showEditPanel(userData.user_email!);
                                 },
                               ),
                               Text(userData.user_email!),
@@ -96,7 +96,7 @@ class _ProfileState extends State<Profile> {
           );
   }
 
-  void _showEditPanel(String email, UserData userData) {
+  void _showEditPanel(String email) {
     showModalBottomSheet<dynamic>(
         context: context,
         isScrollControlled: true,
@@ -162,7 +162,7 @@ class _ProfileState extends State<Profile> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => EditProfile(userData: userData,),
+                              builder: (context) => EditProfile(),
                             ));
                       },
                     ),

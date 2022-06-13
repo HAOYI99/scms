@@ -11,8 +11,7 @@ import 'package:scms/services/user_database.dart';
 import 'package:scms/shared/constants.dart';
 
 class EditProfile extends StatefulWidget {
-  UserData userData;
-  EditProfile({Key? key, required this.userData}) : super(key: key);
+  EditProfile({Key? key}) : super(key: key);
 
   @override
   State<EditProfile> createState() => _EditProfileState();
@@ -28,6 +27,7 @@ class _EditProfileState extends State<EditProfile> {
   final _formKey = GlobalKey<FormState>();
   final List<String> genderGroup = ['Male', 'Female', 'Not Set'];
   bool isLoading = false;
+  String error = '';
 
   TextEditingController nameController = TextEditingController();
   TextEditingController lastnameController = TextEditingController();
@@ -61,18 +61,15 @@ class _EditProfileState extends State<EditProfile> {
                       stream: DatabaseService(uid: user!.uid).userData,
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
-                          // UserData? userData = snapshot.data;
-                          nameController.text = widget.userData.user_name!;
-                          lastnameController.text =
-                              widget.userData.user_lastName!;
-                          widget.userData.user_gender!.isEmpty
+                          UserData? userData = snapshot.data;
+                          nameController.text = userData!.user_name!;
+                          lastnameController.text = userData.user_lastName!;
+                          userData.user_gender!.isEmpty
                               ? genderController.text = genderGroup.elementAt(2)
-                              : genderController.text =
-                                  widget.userData.user_gender!;
-                          matricController.text =
-                              widget.userData.user_matricNo!;
-                          HPnoController.text = widget.userData.user_HPno!;
-                          dobController.text = widget.userData.user_dob!;
+                              : genderController.text = userData.user_gender!;
+                          matricController.text = userData.user_matricNo!;
+                          HPnoController.text = userData.user_HPno!;
+                          dobController.text = userData.user_dob!;
                           return Form(
                               key: _formKey,
                               child: Column(
@@ -93,8 +90,7 @@ class _EditProfileState extends State<EditProfile> {
                                   const SizedBox(height: 20.0),
                                   buildDropDownButton(),
                                   const SizedBox(height: 20.0),
-                                  buildDateForm(
-                                      dobController, dobValidator, context)
+                                  buildDateForm(dobController, dobValidator)
                                 ],
                               ));
                         } else {
@@ -176,8 +172,8 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
-  TextFormField buildDateForm(TextEditingController controller,
-      String? validator(value), BuildContext context) {
+  TextFormField buildDateForm(
+      TextEditingController controller, String? validator(value)) {
     return TextFormField(
       controller: controller,
       readOnly: true,
@@ -188,13 +184,14 @@ class _EditProfileState extends State<EditProfile> {
             initialDate: DateTime.now(),
             firstDate: DateTime.now().subtract(Duration(days: 365 * 100)),
             lastDate: DateTime.now());
-        if (pickedDate != null && pickedDate != widget.userData.user_dob) {
-          String formattedDate = DateFormat('dd-MMM-yyyy').format(pickedDate);
-          controller.text = formattedDate;
-        }
+            if(pickedDate != null){
+              String formattedDate = DateFormat('dd-MMM-yyyy').format(pickedDate);
+              controller.text = formattedDate;
+            }
       },
-      onChanged: (value) {
-        setState(() => controller.text = value);
+      onSaved: (value) {
+        setState(() => controller.text = value!);
+        print('test saved');
       },
       decoration: textInputDecoration.copyWith(
           labelText: 'Date of Birth',
