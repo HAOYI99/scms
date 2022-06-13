@@ -38,7 +38,7 @@ class _RegisterState extends State<Register> {
                   style: TextStyle(
                       color: Colors.blue,
                       fontWeight: FontWeight.bold,
-                      fontSize: 25.0)),
+                      fontSize: 20.0)),
               backgroundColor: Colors.transparent,
               elevation: 0,
               leading: IconButton(
@@ -133,7 +133,7 @@ class _RegisterState extends State<Register> {
         controller.text = value!;
       },
       decoration: textInputDecoration.copyWith(
-          hintText: hintText, prefixIcon: Icon(Icons.mail_sharp)),
+          labelText: hintText, prefixIcon: Icon(Icons.mail_sharp)),
     );
   }
 
@@ -151,7 +151,7 @@ class _RegisterState extends State<Register> {
         controller.text = value!;
       },
       decoration: textInputDecoration.copyWith(
-          hintText: hintText,
+          labelText: hintText,
           prefixIcon: const Icon(Icons.vpn_key_sharp),
           suffixIcon: GestureDetector(
               onTap: () {
@@ -176,7 +176,7 @@ class _RegisterState extends State<Register> {
         controller.text = value!;
       },
       decoration: textInputDecoration.copyWith(
-          hintText: hintText, prefixIcon: Icon(Icons.account_circle_rounded)),
+          labelText: hintText, prefixIcon: Icon(Icons.account_circle_rounded)),
     );
   }
 

@@ -1,12 +1,11 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:scms/models/user.dart';
 import 'package:scms/screens/profile/edit_password.dart';
 import 'package:scms/screens/profile/edit_profile.dart';
+import 'package:scms/screens/profile/edit_profilepic.dart';
 import 'package:scms/services/auth.dart';
-import 'package:scms/services/database.dart';
+import 'package:scms/services/user_database.dart';
 import 'package:scms/shared/constants.dart';
 
 class Profile extends StatefulWidget {
@@ -36,52 +35,57 @@ class _ProfileState extends State<Profile> {
                     return Form(
                       key: _formKey,
                       child: SingleChildScrollView(
-                        child: Column(
-                          children: <Widget>[
-                            SizedBox(
-                              height: 200.0,
-                            ),
-                            GestureDetector(
-                              child: CircleAvatar(
-                                backgroundColor: Colors.blue,
-                                radius: 60.0,
+                        child: Center(
+                          child: Column(
+                            children: <Widget>[
+                              const SizedBox(
+                                height: 200.0,
+                              ),
+                              GestureDetector(
                                 child: CircleAvatar(
-                                  backgroundImage: Image.network(
-                                          'https://assets-global.website-files.com/60bbe7b27107c8b9e196657f/615a9cab7fa875af3586e6b3_ultraman.jpeg')
-                                      .image,
-                                  radius: 55.0,
                                   backgroundColor: Colors.blue,
-                                  child: Stack(
-                                    children: const [
-                                      Align(
-                                        alignment: Alignment.bottomRight,
-                                        child: CircleAvatar(
-                                          radius: 17.0,
-                                          child: Icon(Icons.edit),
-                                        ),
-                                      )
-                                    ],
+                                  radius: 60.0,
+                                  child: CircleAvatar(
+                                    backgroundImage:
+                                        userData!.user_photo!.isNotEmpty
+                                            ? NetworkImage('${userData.user_photo}')
+                                            : AssetImage('assets/logo.png') as ImageProvider,
+                                    radius: 55.0,
+                                    backgroundColor: Colors.blue,
+                                    child: Stack(
+                                      children: const [
+                                        Align(
+                                          alignment: Alignment.bottomRight,
+                                          child: CircleAvatar(
+                                            radius: 17.0,
+                                            child: Icon(Icons.edit),
+                                          ),
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                              onTap: () {
-                                _showEditPanel(userData!.user_email!);
-                              },
-                            ),
-                            Text(userData!.user_ID!),
-                            Text(userData.user_email!),
-                            Text(userData.user_name!),
-                            Text(userData.user_lastName!),
-                            ElevatedButton(
-                                onPressed: () async {
-                                  setState(() => isLoading = true);
-                                  await _auth.signOut().then((value) {
-                                    showSnackBar('Signed Out', Colors.white,
-                                        Colors.blue, context);
-                                  });
+                                onTap: () {
+                                  _showEditPanel(userData.user_email!, userData);
                                 },
-                                child: Text('Sign Out'))
-                          ],
+                              ),
+                              Text(userData.user_email!),
+                              Text(userData.user_lastName! +
+                                  ' ' +
+                                  userData.user_name!),
+                              ElevatedButton(
+                                  onPressed: () async {
+                                    setState(() => isLoading = true);
+                                    await _auth.signOut().then((value) {
+                                      showSuccessSnackBar(
+                                          'Signed Out', context);
+                                    }).catchError((e) {
+                                      showFailedSnackBar(e.toString(), context);
+                                    });
+                                  },
+                                  child: Text('Sign Out'))
+                            ],
+                          ),
                         ),
                       ),
                     );
@@ -92,7 +96,7 @@ class _ProfileState extends State<Profile> {
           );
   }
 
-  void _showEditPanel(String email) {
+  void _showEditPanel(String email, UserData userData) {
     showModalBottomSheet<dynamic>(
         context: context,
         isScrollControlled: true,
@@ -147,18 +151,18 @@ class _ProfileState extends State<Profile> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => EditProfile(),
+                              builder: (context) => changeProfilePicture(),
                             ));
                       },
                     ),
                     InkWell(
-                      child: _buildListItem('Edit Profile Information'),
+                      child: _buildListItem('Edit Profile'),
                       onTap: () {
                         Navigator.pop(context);
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => EditProfile(),
+                              builder: (context) => EditProfile(userData: userData,),
                             ));
                       },
                     ),

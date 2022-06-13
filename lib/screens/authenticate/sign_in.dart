@@ -32,8 +32,8 @@ class _SignInState extends State<SignIn> {
             body: Center(
               child: SingleChildScrollView(
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 20.0, horizontal: 50.0),
                   child: Form(
                     key: _formKey,
                     child: Column(
@@ -60,6 +60,11 @@ class _SignInState extends State<SignIn> {
                         SizedBox(height: 20.0),
                         buildPasswordForm(passwordController, 'Password'),
                         SizedBox(height: 20.0),
+                        Text(
+                          error,
+                          style: const TextStyle(
+                              color: Colors.red, fontSize: 14.0),
+                        ),
                         ElevatedButton(
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
@@ -77,22 +82,18 @@ class _SignInState extends State<SignIn> {
                               }
                             }
                           },
+                          child: const Text(
+                            'Sign In',
+                            style: TextStyle(color: Colors.white),
+                          ),
                           style: ElevatedButton.styleFrom(
                             fixedSize: Size(
                                 MediaQuery.of(context).size.width * 0.8, 45),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20.0)),
                           ),
-                          child: const Text(
-                            'Sign In',
-                            style: TextStyle(color: Colors.white),
-                          ),
                         ),
                         SizedBox(height: 12.0),
-                        Text(
-                          error,
-                          style: const TextStyle(color: Colors.red, fontSize: 14.0),
-                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
@@ -131,7 +132,7 @@ class _SignInState extends State<SignIn> {
         controller.text = value!;
       },
       decoration: textInputDecoration.copyWith(
-          hintText: hintText, prefixIcon: const Icon(Icons.mail_sharp)),
+          labelText: hintText, prefixIcon: const Icon(Icons.mail_sharp)),
     );
   }
 
@@ -146,7 +147,7 @@ class _SignInState extends State<SignIn> {
         controller.text = value!;
       },
       decoration: textInputDecoration.copyWith(
-          hintText: hintText,
+          labelText: hintText,
           prefixIcon: const Icon(Icons.vpn_key_sharp),
           suffixIcon: GestureDetector(
               onTap: () {

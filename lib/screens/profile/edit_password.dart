@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:scms/screens/authenticate/sign_in.dart';
 import 'package:scms/services/auth.dart';
 import 'package:scms/shared/constants.dart';
 
@@ -32,22 +34,7 @@ class changePasswordState extends State<changePassword> {
         ? loadingIndicator()
         : Scaffold(
             backgroundColor: Colors.white,
-            appBar: AppBar(
-              centerTitle: true,
-              title: const Text('Change Password',
-                  style: TextStyle(
-                      color: Colors.blue,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 25.0)),
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              leading: IconButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                icon: const Icon(Icons.arrow_back, color: Colors.blue),
-              ),
-            ),
+            appBar: buildAppBar(context, 'Change Password'),
             body: Center(
               child: SingleChildScrollView(
                 child: Container(
@@ -82,13 +69,18 @@ class changePasswordState extends State<changePassword> {
                               setState(() => isLoading = true);
                               await _auth
                                   .changePassword(newPasswordController.text)
-                                  .then((value) {
+                                  .then((value) async {
                                 Navigator.of(context).pop();
-                                showSnackBar('Password Changed Successfully',
-                                    Colors.white, Colors.green, context);
+                                showSuccessSnackBar(
+                                    'Password Changed Successfully', context);
+                                await _auth.signOut().then((value) {
+                                      showSuccessSnackBar(
+                                          'Please Sign In Again', context);
+                                    }).catchError((e) {
+                                      showFailedSnackBar(e.toString(), context);
+                                    });
                               }).catchError((e) {
-                                showSnackBar(e.toString(), Colors.white,
-                                    Colors.red, context);
+                                showFailedSnackBar(e.toString(), context);
                               });
                             } else {
                               setState(() {
@@ -137,7 +129,7 @@ class changePasswordState extends State<changePassword> {
         controller.text = value!;
       },
       decoration: textInputDecoration.copyWith(
-          hintText: hintText,
+          labelText: hintText,
           prefixIcon: const Icon(Icons.vpn_key_sharp),
           suffixIcon: GestureDetector(
               onTap: () {
