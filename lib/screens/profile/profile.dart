@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scms/models/user.dart';
 import 'package:scms/screens/profile/edit_password.dart';
-import 'package:scms/screens/profile/edit_profile.dart';
 import 'package:scms/screens/profile/edit_profilepic.dart';
+import 'package:scms/screens/profile/editprofile.dart';
 import 'package:scms/services/auth.dart';
 import 'package:scms/services/user_database.dart';
 import 'package:scms/shared/constants.dart';
@@ -46,10 +46,11 @@ class _ProfileState extends State<Profile> {
                                   backgroundColor: Colors.blue,
                                   radius: 60.0,
                                   child: CircleAvatar(
-                                    backgroundImage:
-                                        userData!.user_photo!.isNotEmpty
-                                            ? NetworkImage('${userData.user_photo}')
-                                            : AssetImage('assets/logo.png') as ImageProvider,
+                                    backgroundImage: userData!
+                                            .user_photo!.isNotEmpty
+                                        ? NetworkImage('${userData.user_photo}')
+                                        : AssetImage('assets/logo.png')
+                                            as ImageProvider,
                                     radius: 55.0,
                                     backgroundColor: Colors.blue,
                                     child: Stack(
@@ -66,7 +67,7 @@ class _ProfileState extends State<Profile> {
                                   ),
                                 ),
                                 onTap: () {
-                                  _showEditPanel(userData.user_email!);
+                                  _showEditPanel(userData);
                                 },
                               ),
                               Text(userData.user_email!),
@@ -96,11 +97,11 @@ class _ProfileState extends State<Profile> {
           );
   }
 
-  void _showEditPanel(String email) {
+  void _showEditPanel(UserData userData) {
     showModalBottomSheet<dynamic>(
         context: context,
         isScrollControlled: true,
-        shape: RoundedRectangleBorder(
+        shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(20.0),
                 topRight: Radius.circular(20.0))),
@@ -122,10 +123,10 @@ class _ProfileState extends State<Profile> {
                     ),
                     Container(
                       width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                           border:
                               Border(bottom: BorderSide(color: Colors.blue))),
-                      child: Text(
+                      child: const Text(
                         'Edit Profile Action',
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 18.0, color: Colors.blue),
@@ -139,8 +140,8 @@ class _ProfileState extends State<Profile> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  changePassword(user_email: email),
+                              builder: (context) => changePassword(
+                                  user_email: userData.user_email!),
                             ));
                       },
                     ),
@@ -162,7 +163,8 @@ class _ProfileState extends State<Profile> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => EditProfile(),
+                              builder: (context) =>
+                                  EditProfile(userData: userData),
                             ));
                       },
                     ),

@@ -18,11 +18,27 @@ class DatabaseService {
   // final CollectionReference brewCollection =
   //     FirebaseFirestore.instance.collection('brews');
 
-  Future updateUserData(String firstname, String lastname, String email) async {
+  Future createUserData(String firstname, String lastname, String email) async {
     return await userCollection.doc(uid).set({
       'user_name': firstname,
       'user_lastName': lastname,
       'user_email': email
+    });
+  }
+
+  Future updateUserData(UserData userData) async {
+    return await userCollection.doc(uid).update({
+      'user_name': userData.user_name,
+      'user_lastName': userData.user_lastName,
+      'user_matricNo': userData.user_matricNo,
+      'user_HPno': userData.user_HPno,
+      'user_gender': userData.user_gender,
+      'user_dob': userData.user_dob,
+      'user_addStreet1': userData.user_addStreet1,
+      'user_addStreet2': userData.user_addStreet2,
+      'user_addPostcode': userData.user_addPostcode,
+      'user_addCity': userData.user_addCity,
+      'user_addState': userData.user_addState
     });
   }
 
@@ -43,21 +59,20 @@ class DatabaseService {
 
   UserData _userDataFromSnapshot(DocumentSnapshot snapshot) {
     return UserData(
-      user_ID: uid,
-      user_name: snapshot['user_name'],
-      user_lastName: snapshot['user_lastName'],
-      user_email: snapshot['user_email'],
-      user_photo: snapshot['user_photo'],
-      user_matricNo : snapshot['user_matricNo'],
-      user_HPno : snapshot['user_HPno'],
-      user_gender : snapshot['user_gender'],
-      user_dob : snapshot['user_dob'],
-      user_addStreet1 : snapshot['user_addStreet1'],
-      user_addStreet2 : snapshot['user_addStreet2'],
-      user_addPostcode : snapshot['user_addPostcode'],
-      user_addCity : snapshot['user_addCity'],
-      user_addState : snapshot['user_addState']
-    );
+        user_ID: uid,
+        user_name: snapshot['user_name'],
+        user_lastName: snapshot['user_lastName'],
+        user_email: snapshot['user_email'],
+        user_photo: snapshot['user_photo'],
+        user_matricNo: snapshot['user_matricNo'],
+        user_HPno: snapshot['user_HPno'],
+        user_gender: snapshot['user_gender'],
+        user_dob: snapshot['user_dob'],
+        user_addStreet1: snapshot['user_addStreet1'],
+        user_addStreet2: snapshot['user_addStreet2'],
+        user_addPostcode: snapshot['user_addPostcode'],
+        user_addCity: snapshot['user_addCity'],
+        user_addState: snapshot['user_addState']);
   }
 
   //get brews stream

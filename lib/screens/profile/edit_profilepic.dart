@@ -98,9 +98,8 @@ class _changeProfilePictureState extends State<changeProfilePicture> {
                                             }).catchError((e) =>
                                                     showFailedSnackBar(
                                                         e.toString(), context));
-                                            ;
                                           } else {
-                                            showNormalSnackBar(
+                                            showFailedSnackBar(
                                                 "Select Image First", context);
                                           }
                                         },

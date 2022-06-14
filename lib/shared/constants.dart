@@ -151,19 +151,34 @@ String? phoneNoValidator(value) {
   if (value!.isEmpty) {
     return 'Please enter your phone number';
   }
-  if (value!.length == 10 || value!.length == 11) {
+  if (value!.length == 11 || value!.length == 12) {
     return null;
   }else{
     return 'Please enter a valid phone number !';
   }
 }
 
-String? dobValidator(value){
-  final now = DateTime.now();
-  if(value == null){
-    return 'Please select your Birth Date';
+
+
+String? streetValidator(value){
+  if(value!.isEmpty){
+    return 'Please enter your street address';
   }
-  if(!value.isBefore(DateTime(now.year, now.month, now.day))){
-    return 'Birth dates cannot be in the future';
+}
+
+String? cityValidator(value){
+  if(value!.isEmpty){
+    return 'Please enter your city';
+  }
+}
+
+String? postcodeValidator(value){
+  if(value!.isEmpty){
+    return 'Please enter your postcode';
+  }
+  if(value!.length == 5){
+    return null;
+  }else{
+    return 'Please enter a valid postcode';
   }
 }

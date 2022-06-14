@@ -5,21 +5,20 @@ class thisUser {
 }
 
 class UserData {
-  final String? user_ID;
-  final String? user_name;
-  final String? user_lastName;
-  final String? user_email;
-  final String? user_photo;
-
-  final String? user_matricNo;
-  final String? user_HPno;
-  final String? user_gender;
-  final String? user_dob;
-  final String? user_addStreet1;
-  final String? user_addStreet2;
-  final String? user_addPostcode;
-  final String? user_addCity;
-  final String? user_addState;
+  String? user_ID;
+  String? user_name;
+  String? user_lastName;
+  String? user_email;
+  String? user_photo;
+  String? user_matricNo;
+  String? user_HPno;
+  String? user_gender;
+  String? user_dob;
+  String? user_addStreet1;
+  String? user_addStreet2;
+  String? user_addPostcode;
+  String? user_addCity;
+  String? user_addState;
 
   UserData(
       {this.user_ID,
