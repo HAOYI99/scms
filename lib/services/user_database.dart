@@ -4,25 +4,30 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:scms/models/user.dart';
-import 'package:scms/shared/constants.dart';
 
-class DatabaseService {
+class UserDatabaseService {
   final String? uid;
-  DatabaseService({required this.uid});
+  UserDatabaseService({required this.uid});
 
   //collection reference
   final CollectionReference userCollection =
       FirebaseFirestore.instance.collection('users');
 
-  //     //collection reference
-  // final CollectionReference brewCollection =
-  //     FirebaseFirestore.instance.collection('brews');
-
   Future createUserData(String firstname, String lastname, String email) async {
     return await userCollection.doc(uid).set({
       'user_name': firstname,
       'user_lastName': lastname,
-      'user_email': email
+      'user_email': email,
+      'user_matricNo': '',
+      'user_HPno': '',
+      'user_gender': '',
+      'user_dob': '',
+      'user_addStreet1': '',
+      'user_addStreet2': '',
+      'user_addPostcode': '',
+      'user_addCity': '',
+      'user_addState': '',
+      'user_photo': '',
     });
   }
 
@@ -42,21 +47,6 @@ class DatabaseService {
     });
   }
 
-  //brew list from snapshot
-  // List<Brew> _brewListFromSnapshot(QuerySnapshot snapshot) {
-  //   try {
-  //     return snapshot.docs.map((doc) {
-  //       return Brew(
-  //           name: doc.get('name') ?? '',
-  //           sugar: doc.get('sugar') ?? '0',
-  //           strength: doc.get('strength') ?? 0);
-  //     }).toList();
-  //   } catch (e) {
-  //     print(e.toString());
-  //     return [];
-  //   }
-  // }
-
   UserData _userDataFromSnapshot(DocumentSnapshot snapshot) {
     return UserData(
         user_ID: uid,
@@ -75,14 +65,41 @@ class DatabaseService {
         user_addState: snapshot['user_addState']);
   }
 
-  //get brews stream
-  // Stream<List<Brew>> get brews {
-  //   return brewCollection.snapshots().map(_brewListFromSnapshot);
-  // }
+  // userlist from snapshot
+  List<UserData> _userListFromSnapshot(QuerySnapshot snapshot) {
+    try {
+      return snapshot.docs.map((doc) {
+        return UserData(
+          user_ID: doc.id,
+          user_name: doc.get('user_name'),
+          user_lastName: doc.get('user_lastName'),
+          user_email: doc.get('user_email'),
+          user_photo: doc.get('user_photo'),
+          user_matricNo: doc.get('user_matricNo'),
+          user_HPno: doc.get('user_HPno'),
+          user_gender: doc.get('user_gender'),
+          user_dob: doc.get('user_dob'),
+          user_addStreet1: doc.get('user_addStreet1'),
+          user_addStreet2: doc.get('user_addStreet2'),
+          user_addPostcode: doc.get('user_addPostcode'),
+          user_addCity: doc.get('user_addCity'),
+          user_addState: doc.get('user_addState'),
+        );
+      }).toList();
+    } catch (e) {
+      debugPrint(e.toString());
+      return [];
+    }
+  }
 
   //get user doc stream
   Stream<UserData> get userData {
     return userCollection.doc(uid).snapshots().map(_userDataFromSnapshot);
+  }
+
+  //get user list stream
+  Stream<List<UserData>> get userDataList {
+    return userCollection.snapshots().map(_userListFromSnapshot);
   }
 
   Future uploadImage(File? image, BuildContext context) async {
@@ -90,7 +107,8 @@ class DatabaseService {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     Reference ref = FirebaseStorage.instance
         .ref()
-        .child(uid! + '/images')
+        .child('user')
+        .child('${uid!}/images')
         .child("post_$postID");
 
     await ref.putFile(image!);

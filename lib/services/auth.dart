@@ -55,7 +55,7 @@ class AuthService {
       User? user = userCredential.user;
 
       //create a new document for the user with the uid
-      await DatabaseService(uid: user!.uid)
+      await UserDatabaseService(uid: user!.uid)
           .createUserData(firstName, lastName, email);
       return _userFromFirebaseUser(user);
     } catch (e) {
@@ -67,7 +67,6 @@ class AuthService {
   // validate password
   Future<bool> validatePassword(String email, String oldPassword) async {
     try {
-      User? user = _auth.currentUser;
       AuthCredential credential =
           EmailAuthProvider.credential(email: email, password: oldPassword);
       UserCredential result = await FirebaseAuth.instance.currentUser!

@@ -5,7 +5,7 @@ import 'package:scms/shared/constants.dart';
 class Register extends StatefulWidget {
   final toggleView;
 
-  Register({Key? key, this.toggleView}) : super(key: key);
+  const Register({Key? key, this.toggleView}) : super(key: key);
 
   @override
   State<Register> createState() => _RegisterState();
@@ -18,12 +18,12 @@ class _RegisterState extends State<Register> {
   bool isLoading = false;
   bool isObsure = true;
 
-  final TextEditingController emailController = new TextEditingController();
-  final TextEditingController passwordController = new TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
-      new TextEditingController();
-  final TextEditingController firstNameController = new TextEditingController();
-  final TextEditingController lastNameController = new TextEditingController();
+      TextEditingController();
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
   String error = '';
 
   @override
@@ -133,7 +133,7 @@ class _RegisterState extends State<Register> {
         controller.text = value!;
       },
       decoration: textInputDecoration.copyWith(
-          labelText: hintText, prefixIcon: Icon(Icons.mail_sharp)),
+          labelText: hintText, prefixIcon: const Icon(Icons.mail_sharp)),
     );
   }
 
@@ -176,7 +176,7 @@ class _RegisterState extends State<Register> {
         controller.text = value!;
       },
       decoration: textInputDecoration.copyWith(
-          labelText: hintText, prefixIcon: Icon(Icons.account_circle_rounded)),
+          labelText: hintText, prefixIcon: const Icon(Icons.account_circle_rounded)),
     );
   }
 

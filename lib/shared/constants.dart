@@ -30,14 +30,15 @@ AppBar buildAppBar(BuildContext context, String title) {
   );
 }
 
-showNormalSnackBar(
-    String snacktext, BuildContext context) {
+showNormalSnackBar(String snacktext, BuildContext context) {
   final snackBar = SnackBar(
     content: Row(
       children: [
-        Icon(Icons.info_outline, color: Colors.white, size: 20.0),
+        const Icon(Icons.info_outline, color: Colors.white, size: 20.0),
         const SizedBox(width: 10.0),
-        Text(snacktext, style: TextStyle(fontSize: 18.0, color: Colors.white))
+        Flexible(
+            child: Text(snacktext,
+                style: const TextStyle(fontSize: 18.0, color: Colors.white)))
       ],
     ),
     duration: const Duration(seconds: 5),
@@ -48,14 +49,15 @@ showNormalSnackBar(
   ScaffoldMessenger.of(context).showSnackBar(snackBar);
 }
 
-showSuccessSnackBar(
-    String snacktext, BuildContext context) {
+showSuccessSnackBar(String snacktext, BuildContext context) {
   final snackBar = SnackBar(
     content: Row(
       children: [
-        Icon(Icons.info_outline, color: Colors.white, size: 20.0),
+        const Icon(Icons.info_outline, color: Colors.white, size: 20.0),
         const SizedBox(width: 10.0),
-        Text(snacktext, style: TextStyle(fontSize: 18.0, color: Colors.white))
+        Flexible(
+            child: Text(snacktext,
+                style: const TextStyle(fontSize: 18.0, color: Colors.white)))
       ],
     ),
     duration: const Duration(seconds: 5),
@@ -66,14 +68,15 @@ showSuccessSnackBar(
   ScaffoldMessenger.of(context).showSnackBar(snackBar);
 }
 
-showFailedSnackBar(
-    String snacktext, BuildContext context) {
+showFailedSnackBar(String snacktext, BuildContext context) {
   final snackBar = SnackBar(
     content: Row(
       children: [
-        Icon(Icons.info_outline, color: Colors.white, size: 20.0),
+        const Icon(Icons.info_outline, color: Colors.white, size: 20.0),
         const SizedBox(width: 10.0),
-        Text(snacktext, style: TextStyle(fontSize: 18.0, color: Colors.white))
+        Flexible(
+            child: Text(snacktext,
+                style: const TextStyle(fontSize: 18.0, color: Colors.white)))
       ],
     ),
     duration: const Duration(seconds: 5),
@@ -93,7 +96,7 @@ var textInputDecoration = InputDecoration(
 
 String? emailValidator(value) {
   if (value!.isEmpty) {
-    return 'Please enter your email';
+    return 'Please enter the email';
   }
   //reg expression for email validation
   if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]").hasMatch(value)) {
@@ -103,7 +106,7 @@ String? emailValidator(value) {
 }
 
 String? passwordValidator(value) {
-  RegExp regex = new RegExp(r'^.{6,}$');
+  RegExp regex = RegExp(r'^.{6,}$');
   if (value!.isEmpty) {
     return 'Password is required';
   }
@@ -138,9 +141,9 @@ String? matricNoValidator(value) {
     return 'Please enter your matric card number';
   }
   if (value!.length == 6) {
-    if(value[0] == 'S' || value[0] == 's'){
+    if (value[0] == 'S' || value[0] == 's') {
       return null;
-    }else{
+    } else {
       return "Matric Number Must Start With 'S' or 's'";
     }
   }
@@ -153,32 +156,61 @@ String? phoneNoValidator(value) {
   }
   if (value!.length == 11 || value!.length == 12) {
     return null;
-  }else{
+  } else {
     return 'Please enter a valid phone number !';
   }
 }
 
-
-
-String? streetValidator(value){
-  if(value!.isEmpty){
+String? streetValidator(value) {
+  if (value!.isEmpty) {
     return 'Please enter your street address';
   }
+  return null;
 }
 
-String? cityValidator(value){
-  if(value!.isEmpty){
+String? cityValidator(value) {
+  if (value!.isEmpty) {
     return 'Please enter your city';
   }
+  return null;
 }
 
-String? postcodeValidator(value){
-  if(value!.isEmpty){
+String? postcodeValidator(value) {
+  if (value!.isEmpty) {
     return 'Please enter your postcode';
   }
-  if(value!.length == 5){
+  if (value!.length == 5) {
     return null;
-  }else{
+  } else {
     return 'Please enter a valid postcode';
   }
+}
+
+String? clubNameValidator(value) {
+  if (value!.isEmpty) {
+    return 'Please enter the club name';
+  }
+  if (value!.length < 3) {
+    return 'club name is required at least 3 characters';
+  }
+  return null;
+}
+
+String? clubDescValidator(value) {
+  if (value!.isEmpty) {
+    return 'Please tell something about the club';
+  }else{
+    return '';
+  }
+}
+
+DecoratedBox buildGradientLine(Color leftColor, Color rightColor) {
+  return DecoratedBox(
+    decoration: BoxDecoration(
+      gradient: LinearGradient(colors: [leftColor, rightColor]),
+    ),
+    child: Container(
+      margin: const EdgeInsets.all(1),
+    ),
+  );
 }

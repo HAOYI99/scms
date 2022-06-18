@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scms/models/user.dart';
 import 'package:scms/screens/authenticate/authenticate.dart';
-import 'package:scms/screens/profile/profile.dart';
+import 'package:scms/screens/mainpage.dart';
 
 class wrapper extends StatelessWidget {
   const wrapper({Key? key}) : super(key: key);
@@ -15,7 +15,7 @@ class wrapper extends StatelessWidget {
     if (user == null) {
       return Authenticate();
     } else {
-      return Profile();
+      return MainPage();
     }
   }
 }

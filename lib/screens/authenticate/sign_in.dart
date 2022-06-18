@@ -5,7 +5,7 @@ import 'package:scms/shared/constants.dart';
 class SignIn extends StatefulWidget {
   final toggleView;
 
-  SignIn({Key? key, this.toggleView}) : super(key: key);
+  const SignIn({Key? key, this.toggleView}) : super(key: key);
 
   @override
   State<SignIn> createState() => _SignInState();
@@ -19,8 +19,8 @@ class _SignInState extends State<SignIn> {
   bool isObsure = true;
 
   //text field state
-  final TextEditingController emailController = new TextEditingController();
-  final TextEditingController passwordController = new TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   String error = '';
 
   @override
@@ -47,7 +47,7 @@ class _SignInState extends State<SignIn> {
                             fit: BoxFit.contain,
                           ),
                         ),
-                        SizedBox(height: 20.0),
+                        const SizedBox(height: 20.0),
                         const Text(
                           'Welcome to SCMS',
                           style: TextStyle(
@@ -55,11 +55,11 @@ class _SignInState extends State<SignIn> {
                               fontWeight: FontWeight.bold,
                               fontSize: 25.0),
                         ),
-                        SizedBox(height: 20.0),
+                        const SizedBox(height: 20.0),
                         buildEmailForm(emailController, 'Email'),
-                        SizedBox(height: 20.0),
+                        const SizedBox(height: 20.0),
                         buildPasswordForm(passwordController, 'Password'),
-                        SizedBox(height: 20.0),
+                        const SizedBox(height: 20.0),
                         Text(
                           error,
                           style: const TextStyle(
@@ -82,18 +82,18 @@ class _SignInState extends State<SignIn> {
                               }
                             }
                           },
-                          child: const Text(
-                            'Sign In',
-                            style: TextStyle(color: Colors.white),
-                          ),
                           style: ElevatedButton.styleFrom(
                             fixedSize: Size(
                                 MediaQuery.of(context).size.width * 0.8, 45),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20.0)),
                           ),
+                          child: const Text(
+                            'Sign In',
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ),
-                        SizedBox(height: 12.0),
+                        const SizedBox(height: 12.0),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[

@@ -1,21 +1,20 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:scms/models/user.dart';
-import 'package:scms/services/user_database.dart';
+import 'package:scms/services/club_database.dart';
 import 'package:scms/shared/constants.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 
-class changeProfilePicture extends StatefulWidget {
-  const changeProfilePicture({Key? key}) : super(key: key);
+class changeLogo extends StatefulWidget {
+  String club_ID;
+  changeLogo({Key? key, required this.club_ID}) : super(key: key);
 
   @override
-  State<changeProfilePicture> createState() => _changeProfilePictureState();
+  State<changeLogo> createState() => _changeLogoState();
 }
 
-class _changeProfilePictureState extends State<changeProfilePicture> {
+class _changeLogoState extends State<changeLogo> {
   File? _imageFile;
   final ImagePicker imagePicker = ImagePicker();
   bool isLoading = false;
@@ -23,12 +22,11 @@ class _changeProfilePictureState extends State<changeProfilePicture> {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<thisUser?>(context);
     return isLoading
         ? loadingIndicator()
         : Scaffold(
             backgroundColor: Colors.white,
-            appBar: buildAppBar(context, 'Change Profile Picture'),
+            appBar: buildAppBar(context, 'Change Club Logo'),
             body: SingleChildScrollView(
               child: Center(
                 child: Padding(
@@ -75,7 +73,10 @@ class _changeProfilePictureState extends State<changeProfilePicture> {
                                               Icons.camera_outlined, 'Camera')),
                                       ElevatedButton(
                                           style: buildButtonStyle(context),
-                                          onPressed: () => _imageFile == null ? showFailedSnackBar('No File Selected', context) : cropImage() ,
+                                          onPressed: () => _imageFile == null
+                                              ? showFailedSnackBar(
+                                                  'No File Selected', context)
+                                              : cropImage(),
                                           child: buildButtonIcon(
                                               Icons.crop_outlined, 'Crop')),
                                     ]),
@@ -84,9 +85,8 @@ class _changeProfilePictureState extends State<changeProfilePicture> {
                                           //upload only when the image has some values
                                           if (_imageFile != null) {
                                             setState(() => isLoading = true);
-                                            await UserDatabaseService(
-                                                    uid: user!.uid)
-                                                .uploadImage(
+                                            await ClubDatabaseService(cid: widget.club_ID)
+                                                .uploadLogo(
                                                     _imageFile, context)
                                                 .whenComplete(() {
                                               showSuccessSnackBar(

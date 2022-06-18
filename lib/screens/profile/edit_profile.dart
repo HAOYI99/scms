@@ -1,12 +1,10 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:scms/models/user.dart';
-import 'package:scms/services/auth.dart';
 import 'package:scms/services/user_database.dart';
 import 'package:scms/shared/constants.dart';
 
@@ -22,7 +20,6 @@ class _EditProfileState extends State<EditProfile> {
   var phoneFormatter = MaskTextInputFormatter(
       mask: '###-########', filter: {"#": RegExp(r'[0-9]')});
 
-  final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
   final List<String> genderGroup = ['', 'Male', 'Female'];
   final List<String> stateGroup = [
@@ -48,18 +45,18 @@ class _EditProfileState extends State<EditProfile> {
   String error = '';
 
   TextEditingController nameController = TextEditingController();
-  TextEditingController lastnameController = new TextEditingController();
-  TextEditingController matricController = new TextEditingController();
-  TextEditingController HPnoController = new TextEditingController();
-  TextEditingController genderController = new TextEditingController();
-  TextEditingController dobController = new TextEditingController();
+  TextEditingController lastnameController = TextEditingController();
+  TextEditingController matricController = TextEditingController();
+  TextEditingController HPnoController = TextEditingController();
+  TextEditingController genderController = TextEditingController();
+  TextEditingController dobController = TextEditingController();
 
   //address controller
-  TextEditingController street1Controller = new TextEditingController();
-  TextEditingController street2Controller = new TextEditingController();
-  TextEditingController postcodeController = new TextEditingController();
-  TextEditingController cityController = new TextEditingController();
-  TextEditingController stateController = new TextEditingController();
+  TextEditingController street1Controller = TextEditingController();
+  TextEditingController street2Controller = TextEditingController();
+  TextEditingController postcodeController = TextEditingController();
+  TextEditingController cityController = TextEditingController();
+  TextEditingController stateController = TextEditingController();
 
   bool isFirstLoad = true;
   @override
@@ -187,7 +184,7 @@ class _EditProfileState extends State<EditProfile> {
                                   updatedUserdata.user_addState =
                                       stateController.text;
                                   dynamic result =
-                                      await DatabaseService(uid: user!.uid)
+                                      await UserDatabaseService(uid: user!.uid)
                                           .updateUserData(updatedUserdata)
                                           .whenComplete(() {
                                     showSuccessSnackBar(
@@ -205,16 +202,16 @@ class _EditProfileState extends State<EditProfile> {
                                   }
                                 }
                               },
-                              child: const Text(
-                                'Update',
-                                style: TextStyle(color: Colors.white),
-                              ),
                               style: ElevatedButton.styleFrom(
                                 fixedSize: Size(
                                     MediaQuery.of(context).size.width * 0.8,
                                     45),
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(20.0)),
+                              ),
+                              child: const Text(
+                                'Update',
+                                style: TextStyle(color: Colors.white),
                               ),
                             ),
                           ],
@@ -240,14 +237,88 @@ class _EditProfileState extends State<EditProfile> {
     ]);
   }
 
+  TextFormField buildForm(TextEditingController controller, String hintText,
+      String? validator(value), IconData icon) {
+    return TextFormField(
+      keyboardType: TextInputType.text,
+      textInputAction: TextInputAction.next,
+      controller: controller,
+      validator: validator,
+      onSaved: (value) {
+        controller.text = value!;
+      },
+      decoration: textInputDecoration.copyWith(
+          labelText: hintText, prefixIcon: Icon(icon)),
+    );
+  }
+
+  TextFormField buildNumberForm(TextEditingController controller,
+      String hintText, String? validator(value), IconData icon) {
+    return TextFormField(
+      keyboardType: TextInputType.number,
+      textInputAction: TextInputAction.next,
+      controller: controller,
+      validator: validator,
+      onSaved: (value) {
+        controller.text = value!;
+      },
+      decoration: textInputDecoration.copyWith(
+          labelText: hintText, prefixIcon: Icon(icon)),
+    );
+  }
+
+  TextFormField buildphoneForm(
+      TextEditingController controller, String? validator(value)) {
+    return TextFormField(
+      keyboardType: TextInputType.number,
+      textInputAction: TextInputAction.next,
+      controller: controller,
+      inputFormatters: [phoneFormatter],
+      validator: validator,
+      onSaved: (value) {
+        controller.text = value!;
+      },
+      decoration: textInputDecoration.copyWith(
+          labelText: 'Phone Number',
+          prefixIcon: const Icon(Icons.phone_android_outlined)),
+    );
+  }
+
+  TextFormField buildDateForm(
+      TextEditingController controller, String? validator(value)) {
+    return TextFormField(
+      controller: controller,
+      readOnly: true,
+      validator: validator,
+      onTap: () async {
+        final pickedDate = await showDatePicker(
+            context: context,
+            initialDate: DateTime.now(),
+            firstDate: DateTime.now().subtract(const Duration(days: 365 * 100)),
+            lastDate: DateTime.now());
+        if (pickedDate != null) {
+          String formattedDate = DateFormat('dd-MMM-yyyy').format(pickedDate);
+          controller.text = formattedDate;
+          print('converted date$formattedDate');
+        }
+      },
+      onSaved: (value) {
+        controller.text = value!;
+        print('onsaved date${controller.text}');
+      },
+      decoration: textInputDecoration.copyWith(
+          labelText: 'Date of Birth',
+          prefixIcon: const Icon(Icons.date_range_outlined)),
+    );
+  }
+
   DropdownButtonFormField2<String> buildDropDownButton(String labelText,
       IconData icon, List dropDownItem, TextEditingController controller) {
     return DropdownButtonFormField2(
+      hint: Text(labelText),
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white,
-        labelText: labelText,
-        hintText: labelText,
         prefixIcon: Icon(icon, size: 24),
         isDense: true,
         contentPadding: const EdgeInsets.only(bottom: 20, right: 10),
@@ -277,77 +348,7 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
-  TextFormField buildForm(TextEditingController controller, String hintText,
-      String? validator(value), IconData icon) {
-    return TextFormField(
-      keyboardType: TextInputType.text,
-      controller: controller,
-      validator: validator,
-      onSaved: (value) {
-        controller.text = value!;
-      },
-      decoration: textInputDecoration.copyWith(
-          labelText: hintText, prefixIcon: Icon(icon)),
-    );
+  String? dobValidator(value) {
+    return null;
   }
-
-  TextFormField buildNumberForm(TextEditingController controller,
-      String hintText, String? validator(value), IconData icon) {
-    return TextFormField(
-      keyboardType: TextInputType.number,
-      controller: controller,
-      validator: validator,
-      onSaved: (value) {
-        controller.text = value!;
-      },
-      decoration: textInputDecoration.copyWith(
-          labelText: hintText, prefixIcon: Icon(icon)),
-    );
-  }
-
-  TextFormField buildphoneForm(
-      TextEditingController controller, String? validator(value)) {
-    return TextFormField(
-      keyboardType: TextInputType.number,
-      controller: controller,
-      inputFormatters: [phoneFormatter],
-      validator: validator,
-      onSaved: (value) {
-        controller.text = value!;
-      },
-      decoration: textInputDecoration.copyWith(
-          labelText: 'Phone Number',
-          prefixIcon: Icon(Icons.phone_android_outlined)),
-    );
-  }
-
-  TextFormField buildDateForm(
-      TextEditingController controller, String? validator(value)) {
-    return TextFormField(
-      controller: controller,
-      readOnly: true,
-      validator: validator,
-      onTap: () async {
-        final pickedDate = await showDatePicker(
-            context: context,
-            initialDate: DateTime.now(),
-            firstDate: DateTime.now().subtract(Duration(days: 365 * 100)),
-            lastDate: DateTime.now());
-        if (pickedDate != null) {
-          String formattedDate = DateFormat('dd-MMM-yyyy').format(pickedDate);
-          controller.text = formattedDate;
-          print('converted date' + formattedDate);
-        }
-      },
-      onSaved: (value) {
-        controller.text = value!;
-        print('onsaved date' + controller.text);
-      },
-      decoration: textInputDecoration.copyWith(
-          labelText: 'Date of Birth',
-          prefixIcon: Icon(Icons.date_range_outlined)),
-    );
-  }
-
-  String? dobValidator(value) {}
 }

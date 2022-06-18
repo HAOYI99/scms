@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:scms/screens/authenticate/sign_in.dart';
 import 'package:scms/services/auth.dart';
 import 'package:scms/shared/constants.dart';
 
@@ -22,11 +20,11 @@ class changePasswordState extends State<changePassword> {
   String error = '';
 
   final TextEditingController oldPasswordController =
-      new TextEditingController();
+      TextEditingController();
   final TextEditingController newPasswordController =
-      new TextEditingController();
+      TextEditingController();
   final TextEditingController confirmPasswordController =
-      new TextEditingController();
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -157,9 +155,10 @@ class changePasswordState extends State<changePassword> {
   String? newPasswordValidator(value) {
     if (value.isEmpty) {
       return 'New password is required';
-    }
-    if (oldPasswordController.text.compareTo(value) == 0) {
+    }else if (oldPasswordController.text.compareTo(value) == 0) {
       return 'New Password Cannot Same As Old Password';
+    }else{
+      return '';
     }
   }
 

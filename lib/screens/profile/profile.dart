@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:scms/models/user.dart';
@@ -11,7 +10,7 @@ import 'package:scms/services/user_database.dart';
 import 'package:scms/shared/constants.dart';
 
 class Profile extends StatefulWidget {
-  Profile({Key? key}) : super(key: key);
+  const Profile({Key? key}) : super(key: key);
 
   @override
   State<Profile> createState() => _ProfileState();
@@ -55,7 +54,7 @@ class _ProfileState extends State<Profile> {
             ),
             backgroundColor: Colors.white,
             body: StreamBuilder<UserData>(
-                stream: DatabaseService(uid: user!.uid).userData,
+                stream: UserDatabaseService(uid: user!.uid).userData,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     UserData? userData = snapshot.data;
@@ -64,9 +63,7 @@ class _ProfileState extends State<Profile> {
                         Stack(
                           children: [
                             SizedBox(
-                              height: MediaQuery.of(context).size.height -
-                                  (MediaQuery.of(context).padding.top +
-                                      kToolbarHeight),
+                              height: MediaQuery.of(context).size.height - 130,
                               width: MediaQuery.of(context).size.width,
                             ),
                             //blueContainer
@@ -83,45 +80,44 @@ class _ProfileState extends State<Profile> {
                                       ]),
                                   borderRadius: BorderRadius.only(
                                     topRight: Radius.circular(45),
+                                    bottomRight: Radius.circular(45),
                                   ),
                                 ),
-                                height: MediaQuery.of(context).size.height,
                                 width: MediaQuery.of(context).size.width,
                                 child: Column(
                                   children: [
                                     buildNameTitle(context, userData),
-                                    buildGradientLine(),
+                                    buildGradientLine(Colors.white, Colors.blue),
                                     buildProfileInfo(
                                         context,
                                         userData!.user_email!,
                                         Icons.mail_sharp),
-                                    buildGradientLine(),
+                                    buildGradientLine(Colors.white, Colors.blue),
                                     buildProfileInfo(
                                         context,
                                         userData.user_matricNo!,
                                         MdiIcons.cardAccountDetailsOutline),
-                                    buildGradientLine(),
+                                    buildGradientLine(Colors.white, Colors.blue),
                                     buildProfileInfo(
                                         context,
                                         userData.user_HPno!,
                                         Icons.phone_android_outlined),
-                                    buildGradientLine(),
+                                    buildGradientLine(Colors.white, Colors.blue),
                                     buildProfileInfo(
                                         context,
                                         userData.user_gender!,
                                         genderIcon(userData.user_gender!)),
-                                    buildGradientLine(),
+                                    buildGradientLine(Colors.white, Colors.blue),
                                     buildProfileInfo(
                                         context,
                                         userData.user_dob!,
                                         Icons.date_range_outlined),
-                                    buildGradientLine(),
+                                    buildGradientLine(Colors.white, Colors.blue),
                                     //address here
                                     buildProfileInfo(
                                         context,
                                         getAddress(userData),
                                         Icons.location_on_outlined),
-                                    buildGradientLine(),
                                   ],
                                 ),
                               ),
@@ -154,28 +150,30 @@ class _ProfileState extends State<Profile> {
   }
 
   String getAddress(UserData userData) {
-    return userData.user_addStreet1! +
-        ', \n' +
-        userData.user_addStreet2! +
-        ', \n' +
-        userData.user_addPostcode! +
-        ' ' +
-        userData.user_addCity! +
-        ', \n' +
-        userData.user_addState! +
-        '.';
+    List<String> values = [
+      userData.user_addStreet1.toString(),
+      userData.user_addStreet2.toString(),
+      '${userData.user_addPostcode} ${userData.user_addCity}',
+      userData.user_addState.toString()
+    ];
+    if (values.toSet().toList().toString() == '[,  ]') {
+      return '';
+    } else {
+      String result = values.map((val) => val.trim()).join(',\n');
+      return result;
+    }
   }
 
-  Container buildProfileInfo(
+  SizedBox buildProfileInfo(
       BuildContext context, String userData, IconData icon) {
-    return Container(
+    return SizedBox(
       width: MediaQuery.of(context).size.width,
       child: Padding(
           padding: const EdgeInsets.only(left: 30, top: 15, bottom: 15),
           child: Row(children: [
             Icon(icon, color: Colors.white, size: 25),
             Padding(
-                padding: EdgeInsets.only(left: 25),
+                padding: const EdgeInsets.only(left: 25),
                 child: Text(userData,
                     style: const TextStyle(
                         fontSize: 15,
@@ -185,16 +183,16 @@ class _ProfileState extends State<Profile> {
     );
   }
 
-  Container buildRowProfileInfo(
+  SizedBox buildRowProfileInfo(
       BuildContext context, String userData, IconData icon) {
-    return Container(
+    return SizedBox(
       width: MediaQuery.of(context).size.width * 0.45,
       child: Padding(
           padding: const EdgeInsets.only(left: 30, top: 15, bottom: 15),
           child: Row(children: [
             Icon(icon, color: Colors.white, size: 25),
             Padding(
-                padding: EdgeInsets.only(left: 25),
+                padding: const EdgeInsets.only(left: 25),
                 child: Text(userData,
                     style: const TextStyle(
                         fontSize: 15,
@@ -214,7 +212,7 @@ class _ProfileState extends State<Profile> {
           child: Row(children: [
             Icon(icon, color: Colors.white, size: 25),
             Padding(
-                padding: EdgeInsets.only(left: 25),
+                padding: const EdgeInsets.only(left: 25),
                 child: Text(userData,
                     style: const TextStyle(
                         fontSize: 15,
@@ -224,24 +222,13 @@ class _ProfileState extends State<Profile> {
     );
   }
 
-  DecoratedBox buildGradientLine() {
-    return DecoratedBox(
-      child: Container(
-        margin: const EdgeInsets.all(1),
-      ),
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(colors: [Colors.white, Colors.blue]),
-      ),
-    );
-  }
-
   Container buildNameTitle(BuildContext context, UserData? userData) {
     return Container(
       width: MediaQuery.of(context).size.width,
-      margin: EdgeInsets.only(left: 100),
+      margin: const EdgeInsets.only(left: 100),
       child: Padding(
         padding: const EdgeInsets.only(left: 30, top: 25, bottom: 10),
-        child: Text(userData!.user_name! + ' ' + userData.user_lastName!,
+        child: Text('${userData!.user_name!} ${userData.user_lastName!}',
             style: const TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.bold,
@@ -291,68 +278,66 @@ class _ProfileState extends State<Profile> {
         builder: (context) {
           return Wrap(
             children: <Widget>[
-              Container(
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(150.0, 20.0, 150.0, 20.0),
-                      child: Container(
-                          height: 5.0,
-                          width: 80.0,
-                          decoration: BoxDecoration(
-                              color: Colors.grey[400],
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(8.0)))),
+              Column(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(150.0, 20.0, 150.0, 20.0),
+                    child: Container(
+                        height: 5.0,
+                        width: 80.0,
+                        decoration: BoxDecoration(
+                            color: Colors.grey[400],
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(8.0)))),
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    decoration: const BoxDecoration(
+                        border:
+                            Border(bottom: BorderSide(color: Colors.blue))),
+                    padding: const EdgeInsets.only(bottom: 15.0),
+                    child: const Text(
+                      'Edit Profile Action',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 18.0, color: Colors.blue),
                     ),
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      decoration: const BoxDecoration(
-                          border:
-                              Border(bottom: BorderSide(color: Colors.blue))),
-                      child: const Text(
-                        'Edit Profile Action',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 18.0, color: Colors.blue),
-                      ),
-                      padding: EdgeInsets.only(bottom: 15.0),
-                    ),
-                    InkWell(
-                      child: _buildListItem('Change Password'),
-                      onTap: () {
-                        Navigator.pop(context);
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => changePassword(
-                                  user_email: userData.user_email!),
-                            ));
-                      },
-                    ),
-                    InkWell(
-                      child: _buildListItem('Change Profile Picture'),
-                      onTap: () {
-                        Navigator.pop(context);
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => changeProfilePicture(),
-                            ));
-                      },
-                    ),
-                    InkWell(
-                      child: _buildListItem('Edit Profile'),
-                      onTap: () {
-                        Navigator.pop(context);
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  EditProfile(userData: userData),
-                            ));
-                      },
-                    ),
-                  ],
-                ),
+                  ),
+                  InkWell(
+                    child: _buildListItem('Change Password'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => changePassword(
+                                user_email: userData.user_email!),
+                          ));
+                    },
+                  ),
+                  InkWell(
+                    child: _buildListItem('Change Profile Picture'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const changeProfilePicture(),
+                          ));
+                    },
+                  ),
+                  InkWell(
+                    child: _buildListItem('Edit Profile'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                EditProfile(userData: userData),
+                          ));
+                    },
+                  ),
+                ],
               ),
             ],
           );
@@ -362,8 +347,8 @@ class _ProfileState extends State<Profile> {
   Container _buildListItem(String text) {
     return Container(
       width: MediaQuery.of(context).size.width,
-      padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+      decoration: const BoxDecoration(
         border: Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
       ),
       child: Text(

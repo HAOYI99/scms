@@ -3,7 +3,7 @@ import 'package:scms/screens/authenticate/register.dart';
 import 'package:scms/screens/authenticate/sign_in.dart';
 
 class Authenticate extends StatefulWidget {
-  Authenticate({Key? key}) : super(key: key);
+  const Authenticate({Key? key}) : super(key: key);
 
   @override
   State<Authenticate> createState() => _AuthenticateState();
