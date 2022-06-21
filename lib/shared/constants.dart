@@ -90,7 +90,7 @@ showFailedSnackBar(String snacktext, BuildContext context) {
 var textInputDecoration = InputDecoration(
   fillColor: Colors.white,
   filled: true,
-  contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
+  contentPadding: const EdgeInsets.fromLTRB(20, 15, 0, 15),
   border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
 );
 
@@ -199,8 +199,6 @@ String? clubNameValidator(value) {
 String? clubDescValidator(value) {
   if (value!.isEmpty) {
     return 'Please tell something about the club';
-  }else{
-    return '';
   }
 }
 

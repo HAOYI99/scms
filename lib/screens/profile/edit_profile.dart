@@ -299,12 +299,10 @@ class _EditProfileState extends State<EditProfile> {
         if (pickedDate != null) {
           String formattedDate = DateFormat('dd-MMM-yyyy').format(pickedDate);
           controller.text = formattedDate;
-          print('converted date$formattedDate');
         }
       },
       onSaved: (value) {
         controller.text = value!;
-        print('onsaved date${controller.text}');
       },
       decoration: textInputDecoration.copyWith(
           labelText: 'Date of Birth',
@@ -315,7 +313,7 @@ class _EditProfileState extends State<EditProfile> {
   DropdownButtonFormField2<String> buildDropDownButton(String labelText,
       IconData icon, List dropDownItem, TextEditingController controller) {
     return DropdownButtonFormField2(
-      hint: Text(labelText),
+      hint: Text(labelText, overflow: TextOverflow.ellipsis),
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white,

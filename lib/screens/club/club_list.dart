@@ -16,10 +16,11 @@ class _ClubListState extends State<ClubList> {
   Widget build(BuildContext context) {
     final clubs = Provider.of<List<ClubData>>(context);
     clubs.sort((a, b) {
-      return a.club_name!.compareTo(b.club_name!);
+      return a.club_name!.toLowerCase().compareTo(b.club_name!.toLowerCase());
     });
     if (clubs.isNotEmpty) {
       return ListView.builder(
+        physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         itemCount: clubs.length,
         itemBuilder: (context, index) {
@@ -28,10 +29,12 @@ class _ClubListState extends State<ClubList> {
       );
     } else {
       return Padding(
-        padding: EdgeInsets.only(top: MediaQuery.of(context).size.height*0.3),
+        padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.3),
         child: const Text('No Club',
             style: TextStyle(
-                color: Colors.blue, fontWeight: FontWeight.bold, fontSize: 20.0)),
+                color: Colors.blue,
+                fontWeight: FontWeight.bold,
+                fontSize: 20.0)),
       );
     }
   }

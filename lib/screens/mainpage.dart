@@ -2,6 +2,7 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:scms/screens/authenticate/sign_in.dart';
 import 'package:scms/screens/club/club.dart';
+import 'package:scms/screens/home/home.dart';
 import 'package:scms/screens/profile/profile.dart';
 
 class MainPage extends StatefulWidget {
@@ -14,7 +15,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   int _page = 0;
   final GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
-  final List pages = [Club(), SignIn(), SignIn(), SignIn(), const Profile()];
+  final List pages = [Club(), SignIn(), Home(), SignIn(), const Profile()];
 
   @override
   Widget build(BuildContext context) {
@@ -27,11 +28,11 @@ class _MainPageState extends State<MainPage> {
         backgroundColor: Colors.white,
         buttonBackgroundColor: Colors.indigo,
         items: const [
-          Icon(Icons.groups_sharp),
-          Icon(Icons.checklist),
-          Icon(Icons.home),
-          Icon(Icons.event),
-          Icon(Icons.person),
+          Icon(Icons.groups_sharp, color: Colors.white),
+          Icon(Icons.checklist, color: Colors.white),
+          Icon(Icons.home, color: Colors.white),
+          Icon(Icons.event, color: Colors.white),
+          Icon(Icons.person, color: Colors.white),
         ],
         onTap: (index) {
           setState(() {

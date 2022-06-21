@@ -71,7 +71,8 @@ class _ClubState extends State<Club> {
                     ? Colors.blue
                     : Colors.white,
               ),
-              Container(child: getCustomContainer())
+              Container(child: getCustomContainer()),
+              const SizedBox(height: 10.0)
             ],
           ),
         ),

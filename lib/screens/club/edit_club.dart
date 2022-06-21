@@ -38,7 +38,7 @@ class _EditClubState extends State<EditClub> {
       isFirstLoad = false;
     }
     return isLoading
-        ? loadingIndicator()
+        ? loadingIndicator() 
         : Scaffold(
             backgroundColor: Colors.white,
             appBar: buildAppBar(context, 'Edit Club'),

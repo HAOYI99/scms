@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:scms/models/club.dart';
 import 'package:scms/models/user.dart';
 import 'package:scms/services/club_database.dart';
+import 'package:scms/services/user_database.dart';
 import 'package:scms/shared/constants.dart';
 
 class ManageCommitteeMember extends StatefulWidget {
@@ -22,7 +23,7 @@ class _ManageCommitteeMemberState extends State<ManageCommitteeMember> {
 
   bool isFirstLoad = true;
 
-  final List<String> category = ['test', 'test2'];
+  final List<String> user = ['test', 'test2'];
 
   //controller
   TextEditingController nameController = TextEditingController();
@@ -45,76 +46,33 @@ class _ManageCommitteeMemberState extends State<ManageCommitteeMember> {
         : Scaffold(
             backgroundColor: Colors.white,
             appBar: buildAppBar(context, 'Edit Club'),
-            body: Center(
-              child: SingleChildScrollView(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 20.0, horizontal: 50.0),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        const SizedBox(height: 20.0),
-                        buildForm(nameController, 'Club Name',
-                            clubNameValidator, Icons.groups_rounded),
-                        const SizedBox(height: 20.0),
-                        buildLongForm(descController, 'Club Description',
-                            clubDescValidator, MdiIcons.imageText),
-                        const SizedBox(height: 20.0),
-                        buildForm(emailController, 'Official Email',
-                            emailValidator, Icons.email_sharp),
-                        const SizedBox(height: 20.0),
-                        categoryDropDownButton('Club Category',
-                            Icons.category_sharp, category, categoryController),
-                        Text(error,
-                            style: const TextStyle(
-                                color: Colors.red, fontSize: 14.0)),
-                        ElevatedButton(
-                          onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              setState(() => isLoading = true);
-                              ClubData updatedClubData = ClubData();
-                              // updatedClubData.club_ID = widget.clubData.club_ID;
-                              updatedClubData.club_name = nameController.text;
-                              updatedClubData.club_desc = descController.text;
-                              updatedClubData.club_email = emailController.text;
-                              updatedClubData.club_category =
-                                  categoryController.text;
-                              dynamic result = await ClubDatabaseService()
-                                  .updateClubData(updatedClubData)
-                                  .whenComplete(() {
-                                showSuccessSnackBar(
-                                    'Club Updated Successfully !', context);
-                                Navigator.of(context).pop();
-                              }).catchError((e) => showFailedSnackBar(
-                                      e.toString(), context));
-                              if (result == null) {
-                                setState(() {
-                                  error =
-                                      'Could not update club, please try again';
-                                  isLoading = false;
-                                });
-                              }
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            fixedSize: Size(
-                                MediaQuery.of(context).size.width * 0.8, 45),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20.0)),
-                          ),
-                          child: const Text(
-                            'Update',
-                            style: TextStyle(color: Colors.white),
+            body: StreamBuilder<List<UserData>>(
+              stream: UserDatabaseService(uid: user!.uid).userDataList,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  List<UserData>? userData = snapshot.data;
+                  return Center(
+                    child: SingleChildScrollView(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 20.0, horizontal: 50.0),
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              
+                            ],
                           ),
                         ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
-              ),
+                  );
+                } else {
+                  return loadingIndicator();
+                }
+              },
             ),
           );
   }

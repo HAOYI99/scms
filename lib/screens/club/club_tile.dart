@@ -3,9 +3,8 @@ import 'package:scms/models/club.dart';
 import 'package:scms/models/user.dart';
 import 'package:scms/screens/club/edit_club.dart';
 import 'package:scms/screens/club/edit_clublogo.dart';
-import 'package:scms/screens/club/manage_member.dart';
+import 'package:scms/screens/event/event.dart';
 import 'package:scms/services/user_database.dart';
-import 'package:scms/shared/constants.dart';
 
 class ClubTile extends StatelessWidget {
   final ClubData clubData;
@@ -35,7 +34,7 @@ class ClubTile extends StatelessWidget {
             title: Text(clubData.club_name!),
             subtitle: Text(clubData.club_ID!),
             iconColor: Colors.blue,
-            trailing: isMyClub ? const Icon(Icons.edit) : null,
+            trailing: isMyClub ? const Icon(Icons.edit) : const Icon(Icons.expand_more),
           ),
         ),
         onTap: () {
@@ -81,7 +80,7 @@ class ClubTile extends StatelessWidget {
                               Border(bottom: BorderSide(color: Colors.blue))),
                       padding: const EdgeInsets.only(bottom: 15.0),
                       child: const Text(
-                        'Edit Profile Action',
+                        'Edit Club Action',
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 18.0, color: Colors.blue),
                       ),
@@ -111,13 +110,13 @@ class ClubTile extends StatelessWidget {
                       },
                     ),
                     InkWell(
-                      child: _buildListItem('Manage Committee Member', context),
+                      child: _buildListItem('Manage Event', context),
                       onTap: () {
                         Navigator.pop(context);
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => ManageCommitteeMember()));
+                                builder: (context) => Event(club_ID: clubData.club_ID!,)));
                       },
                     ),
                   ],

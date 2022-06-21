@@ -109,7 +109,7 @@ class UserDatabaseService {
         .ref()
         .child('user')
         .child('${uid!}/images')
-        .child("post_$postID");
+        .child("images_$postID");
 
     await ref.putFile(image!);
     String profilePicture = await ref.getDownloadURL();
