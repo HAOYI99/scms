@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:scms/models/event.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:scms/shared/constants.dart';
@@ -114,7 +113,6 @@ class _eventPosterState extends State<eventPoster> {
                                         ]),
                                     ElevatedButton(
                                         onPressed: () async {
-                                          //upload only when the image has some values
                                           if (_imageFile != null) {
                                             setState(() => isLoading = true);
                                             Navigator.pop(context, _imageFile);

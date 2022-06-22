@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:scms/models/club.dart';
 import 'package:scms/models/event.dart';
 import 'package:scms/screens/event/event_list.dart';
 import 'package:scms/screens/event/register_event.dart';
-import 'package:scms/services/club_database.dart';
+import 'package:scms/services/event_database.dart';
 import 'package:scms/shared/constants.dart';
 
 enum EventSwitch { upcoming, expired }
 
 class Event extends StatefulWidget {
-  String club_ID;
-  Event({Key? key, required this.club_ID}) : super(key: key);
+  ClubData clubData;
+  Event({Key? key, required this.clubData}) : super(key: key);
 
   @override
   State<Event> createState() => _EventState();
@@ -22,15 +23,16 @@ class _EventState extends State<Event> {
   Widget build(BuildContext context) {
     return StreamProvider<List<EventData>>.value(
       initialData: [],
-      value: ClubDatabaseService(cid: widget.club_ID).eventdata,
+      value: EventDatabaseService(cid: widget.clubData.club_ID).eventdata,
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: const Text("Club's Events",
+          title: Text("${widget.clubData.club_name}'s Events",
+              overflow: TextOverflow.clip,
               style: TextStyle(
                   color: Colors.blue,
                   fontWeight: FontWeight.bold,
-                  fontSize: 20.0)),
+                  fontSize: 18.0)),
           backgroundColor: Colors.transparent,
           elevation: 0,
           leading: IconButton(
@@ -47,7 +49,7 @@ class _EventState extends State<Event> {
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                            CreateEvents(club_ID: widget.club_ID),
+                            CreateEvents(club_ID: widget.clubData.club_ID!),
                       ));
                 },
                 icon: const Icon(
@@ -110,9 +112,9 @@ class _EventState extends State<Event> {
   Widget getCustomContainer() {
     switch (selectedEventSwitch) {
       case EventSwitch.upcoming:
-        return EventList(club_ID: widget.club_ID, isExpired: false);
+        return EventList(club_ID: widget.clubData.club_ID!, isExpired: false);
       case EventSwitch.expired:
-        return EventList(club_ID: widget.club_ID, isExpired: true);
+        return EventList(club_ID: widget.clubData.club_ID!, isExpired: true);
     }
   }
 }

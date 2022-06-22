@@ -15,10 +15,10 @@ class _ClubListState extends State<ClubList> {
   @override
   Widget build(BuildContext context) {
     final clubs = Provider.of<List<ClubData>>(context);
-    clubs.sort((a, b) {
-      return a.club_name!.toLowerCase().compareTo(b.club_name!.toLowerCase());
-    });
     if (clubs.isNotEmpty) {
+      clubs.sort((a, b) {
+        return a.club_name!.toLowerCase().compareTo(b.club_name!.toLowerCase());
+      });
       return ListView.builder(
         physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,

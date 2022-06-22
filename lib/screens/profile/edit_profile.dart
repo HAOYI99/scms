@@ -21,26 +21,6 @@ class _EditProfileState extends State<EditProfile> {
       mask: '###-########', filter: {"#": RegExp(r'[0-9]')});
 
   final _formKey = GlobalKey<FormState>();
-  final List<String> genderGroup = ['', 'Male', 'Female'];
-  final List<String> stateGroup = [
-    '',
-    'Johor',
-    'Kedah',
-    'Kelantan',
-    'Malacca',
-    'Negeri Sembilan',
-    'Pahang',
-    'Penang',
-    'Perak',
-    'Perlis',
-    'Sabah',
-    'Sarawak',
-    'Selangor',
-    'Terengganu',
-    'Kuala Lumpur',
-    'Labuan',
-    'Putrajaya'
-  ];
   bool isLoading = false;
   String error = '';
 
@@ -61,6 +41,7 @@ class _EditProfileState extends State<EditProfile> {
   bool isFirstLoad = true;
   @override
   Widget build(BuildContext context) {
+    stateGroup.sort();
     double horizontalSpace = MediaQuery.of(context).size.width * 0.05;
     final user = Provider.of<thisUser?>(context);
     if (isFirstLoad) {
@@ -313,7 +294,7 @@ class _EditProfileState extends State<EditProfile> {
   DropdownButtonFormField2<String> buildDropDownButton(String labelText,
       IconData icon, List dropDownItem, TextEditingController controller) {
     return DropdownButtonFormField2(
-      hint: Text(labelText, overflow: TextOverflow.ellipsis),
+      hint: Text(labelText),
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white,
@@ -336,7 +317,7 @@ class _EditProfileState extends State<EditProfile> {
       items: dropDownItem
           .map((item) => DropdownMenuItem<String>(
                 value: item,
-                child: Text(item),
+                child: Text(item, overflow: TextOverflow.ellipsis,),
               ))
           .toList(),
       value: controller.text,

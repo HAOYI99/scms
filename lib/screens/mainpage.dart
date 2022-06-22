@@ -13,7 +13,7 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  int _page = 0;
+  int _page = 2;
   final GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
   final List pages = [Club(), SignIn(), Home(), SignIn(), const Profile()];
 
@@ -21,7 +21,7 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: CurvedNavigationBar(
-        index: 0,
+        index: 2,
         key: _bottomNavigationKey,
         height: 50,
         color: Colors.indigo,

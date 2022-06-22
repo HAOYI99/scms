@@ -6,27 +6,53 @@ import 'package:scms/shared/constants.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 
-class changeLogo extends StatefulWidget {
-  String club_ID;
-  changeLogo({Key? key, required this.club_ID}) : super(key: key);
+class clubLogo extends StatefulWidget {
+  String? club_ID;
+  File? selectImage;
+  clubLogo({Key? key, this.club_ID, this.selectImage}) : super(key: key);
 
   @override
-  State<changeLogo> createState() => _changeLogoState();
+  State<clubLogo> createState() => _clubLogoState();
 }
 
-class _changeLogoState extends State<changeLogo> {
+class _clubLogoState extends State<clubLogo> {
   File? _imageFile;
   final ImagePicker imagePicker = ImagePicker();
   bool isLoading = false;
+  bool isFirstLoad = true;
   final isSelected = <bool>[false, false, false];
 
   @override
   Widget build(BuildContext context) {
+    if (isFirstLoad && widget.selectImage != null) {
+      setState(() {
+        _imageFile = widget.selectImage;
+        isFirstLoad = false;
+      });
+    }
     return isLoading
         ? loadingIndicator()
         : Scaffold(
             backgroundColor: Colors.white,
-            appBar: buildAppBar(context, 'Change Club Logo'),
+            appBar: AppBar(
+              centerTitle: true,
+              title: Text(
+                  widget.club_ID == null
+                      ? 'Select Club Logo'
+                      : 'Change Club Logo',
+                  style: const TextStyle(
+                      color: Colors.blue,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20.0)),
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              leading: IconButton(
+                onPressed: () {
+                  Navigator.pop(context, widget.selectImage);
+                },
+                icon: const Icon(Icons.arrow_back, color: Colors.blue),
+              ),
+            ),
             body: SingleChildScrollView(
               child: Center(
                 child: Padding(
@@ -54,48 +80,43 @@ class _changeLogoState extends State<changeLogo> {
                                     Expanded(
                                         child: _imageFile == null
                                             ? const Center(
-                                                child:
-                                                    Text('Select Your Image'))
+                                                child: Text('Select Your Logo'))
                                             : Image.file(_imageFile!,
                                                 fit: BoxFit.contain)),
-                                    ToggleButtons(isSelected: isSelected, children: [
-                                      ElevatedButton(
-                                          style: buildButtonStyle(context),
-                                          onPressed: () => imagePickerFunction(
-                                              ImageSource.gallery),
-                                          child: buildButtonIcon(
-                                              Icons.image, 'Image')),
-                                      ElevatedButton(
-                                          style: buildButtonStyle(context),
-                                          onPressed: () => imagePickerFunction(
-                                              ImageSource.camera),
-                                          child: buildButtonIcon(
-                                              Icons.camera_outlined, 'Camera')),
-                                      ElevatedButton(
-                                          style: buildButtonStyle(context),
-                                          onPressed: () => _imageFile == null
-                                              ? showFailedSnackBar(
-                                                  'No File Selected', context)
-                                              : cropImage(),
-                                          child: buildButtonIcon(
-                                              Icons.crop_outlined, 'Crop')),
-                                    ]),
+                                    ToggleButtons(
+                                        isSelected: isSelected,
+                                        children: [
+                                          ElevatedButton(
+                                              style: buildButtonStyle(context),
+                                              onPressed: () =>
+                                                  imagePickerFunction(
+                                                      ImageSource.gallery),
+                                              child: buildButtonIcon(
+                                                  Icons.image, 'Image')),
+                                          ElevatedButton(
+                                              style: buildButtonStyle(context),
+                                              onPressed: () =>
+                                                  imagePickerFunction(
+                                                      ImageSource.camera),
+                                              child: buildButtonIcon(
+                                                  Icons.camera_outlined,
+                                                  'Camera')),
+                                          ElevatedButton(
+                                              style: buildButtonStyle(context),
+                                              onPressed: () =>
+                                                  _imageFile == null
+                                                      ? showFailedSnackBar(
+                                                          'No File Selected',
+                                                          context)
+                                                      : cropImage(),
+                                              child: buildButtonIcon(
+                                                  Icons.crop_outlined, 'Crop')),
+                                        ]),
                                     ElevatedButton(
                                         onPressed: () async {
-                                          //upload only when the image has some values
                                           if (_imageFile != null) {
                                             setState(() => isLoading = true);
-                                            await ClubDatabaseService(cid: widget.club_ID)
-                                                .uploadLogo(
-                                                    _imageFile, context)
-                                                .whenComplete(() {
-                                              showSuccessSnackBar(
-                                                  'Upload Successfully !',
-                                                  context);
-                                              Navigator.of(context).pop();
-                                            }).catchError((e) =>
-                                                    showFailedSnackBar(
-                                                        e.toString(), context));
+                                            Navigator.pop(context, _imageFile);
                                           } else {
                                             showFailedSnackBar(
                                                 "Select Image First", context);

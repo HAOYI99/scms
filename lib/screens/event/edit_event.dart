@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:scms/models/event.dart';
 import 'package:scms/screens/event/event_poster.dart';
-import 'package:scms/services/club_database.dart';
+import 'package:scms/services/event_database.dart';
 import 'package:scms/shared/constants.dart';
 
 class EditEvent extends StatefulWidget {
@@ -28,7 +28,10 @@ class _EditEventState extends State<EditEvent> {
   String formattedStartDate = '';
   String formattedEndDate = '';
 
-  final List<String> audienceList = ['Public', 'Private'];
+  DateTime eventStart = DateTime.now();
+  DateTime eventEnd = DateTime.now();
+  TimeOfDay startTime = TimeOfDay.now();
+  TimeOfDay endTime = TimeOfDay.now();
 
   TextEditingController titleController = TextEditingController();
   TextEditingController captionController = TextEditingController();
@@ -46,11 +49,17 @@ class _EditEventState extends State<EditEvent> {
       titleController.text = widget.eventData.event_title!;
       captionController.text = widget.eventData.event_caption!;
       locationController.text = widget.eventData.event_location!;
-      formattedStartDate = widget.eventData.event_startDate!;
-      formattedEndDate = widget.eventData.event_endDate!;
+
+      eventStart = DateTime.parse(widget.eventData.event_start!);
+      eventEnd = DateTime.parse(widget.eventData.event_end!);
+      formattedStartDate = DateFormat('dd-MMM-yyyy').format(eventStart);
+      formattedEndDate = DateFormat('dd-MMM-yyyy').format(eventEnd);
       dateRangeController.text = '$formattedStartDate - $formattedEndDate';
-      startTimeController.text = widget.eventData.event_startTime!;
-      endTimeController.text = widget.eventData.event_endTime!;
+
+      startTime = TimeOfDay.fromDateTime(eventStart);
+      endTime = TimeOfDay.fromDateTime(eventEnd);
+      startTimeController.text = startTime.format(context);
+      endTimeController.text = endTime.format(context);
       audienceController.text = widget.eventData.event_audience!;
       numberAudienceController.text =
           widget.eventData.event_numAudience!.toString();
@@ -127,11 +136,11 @@ class _EditEventState extends State<EditEvent> {
                               children: <Widget>[
                                 Flexible(
                                     child: buildTimeForm(startTimeController,
-                                        'Start Time', Icons.timelapse)),
+                                        'Start Time', Icons.timelapse, true)),
                                 SizedBox(width: horizontalSpace),
                                 Flexible(
                                     child: buildTimeForm(endTimeController,
-                                        'End Time', Icons.timelapse))
+                                        'End Time', Icons.timelapse, false))
                               ],
                             ),
                             const SizedBox(height: 20.0),
@@ -148,7 +157,8 @@ class _EditEventState extends State<EditEvent> {
                                     color: Colors.red, fontSize: 14.0)),
                             ElevatedButton(
                               onPressed: () async {
-                                if (_imageFile == null) {
+                                if (_imageFile == null &&
+                                    widget.eventData.event_poster == null) {
                                   setState(() {
                                     noImageSelect =
                                         'Event Poster is required !';
@@ -161,15 +171,13 @@ class _EditEventState extends State<EditEvent> {
                                       event_title: titleController.text,
                                       event_caption: captionController.text,
                                       event_location: locationController.text,
-                                      event_startDate: formattedStartDate,
-                                      event_endDate: formattedEndDate,
-                                      event_startTime: startTimeController.text,
-                                      event_endTime: startTimeController.text,
+                                      event_start: eventStart.toString(),
+                                      event_end: eventEnd.toString(),
                                       event_audience: audienceController.text,
                                       event_numAudience: int.parse(
                                           numberAudienceController.text),
                                     );
-                                    dynamic result = ClubDatabaseService(
+                                    dynamic result = EventDatabaseService(
                                             cid: widget.club_ID,
                                             eid: widget.eventData.event_ID)
                                         .updateEventData(
@@ -180,7 +188,6 @@ class _EditEventState extends State<EditEvent> {
                                       Navigator.of(context).pop();
                                     }).catchError((e) => showFailedSnackBar(
                                             e.toString(), context));
-
                                     if (result == null) {
                                       setState(() {
                                         error =
@@ -210,6 +217,10 @@ class _EditEventState extends State<EditEvent> {
           );
   }
 
+  DateTime join(DateTime date, TimeOfDay time) {
+    return DateTime(date.year, date.month, date.day, time.hour, time.minute);
+  }
+
   TextFormField buildForm(TextEditingController controller, String hintText,
       String? validator(value), IconData icon) {
     return TextFormField(
@@ -232,16 +243,17 @@ class _EditEventState extends State<EditEvent> {
       readOnly: true,
       onTap: () async {
         final pickedDate = await showDateRangePicker(
-            initialDateRange: DateTimeRange(
-                start: DateTime.now(),
-                end: DateTime.now().add(const Duration(hours: 24 * 3))),
+            initialDateRange: DateTimeRange(start: eventStart, end: eventEnd),
             context: context,
             firstDate: DateTime.now(),
             lastDate: DateTime(DateTime.now().year + 5));
         if (pickedDate != null) {
-          formattedStartDate =
+          eventStart = pickedDate.start;
+          eventEnd = pickedDate.end;
+          String formattedStartDate =
               DateFormat('dd-MMM-yyyy').format(pickedDate.start);
-          formattedEndDate = DateFormat('dd-MMM-yyyy').format(pickedDate.end);
+          String formattedEndDate =
+              DateFormat('dd-MMM-yyyy').format(pickedDate.end);
           controller.text = '$formattedStartDate - $formattedEndDate';
         }
       },
@@ -255,8 +267,8 @@ class _EditEventState extends State<EditEvent> {
     );
   }
 
-  TextFormField buildTimeForm(
-      TextEditingController controller, String labelText, IconData icons) {
+  TextFormField buildTimeForm(TextEditingController controller,
+      String labelText, IconData icons, bool isStartTime) {
     return TextFormField(
       controller: controller,
       readOnly: true,
@@ -265,7 +277,7 @@ class _EditEventState extends State<EditEvent> {
       onTap: () async {
         final pickedTime = await showTimePicker(
           context: context,
-          initialTime: TimeOfDay.now(),
+          initialTime: isStartTime ? startTime : endTime,
           builder: (BuildContext context, Widget? child) {
             return MediaQuery(
               data:
@@ -275,6 +287,13 @@ class _EditEventState extends State<EditEvent> {
           },
         );
         if (pickedTime != null) {
+          if (isStartTime) {
+            startTime = pickedTime;
+            eventStart = join(eventStart, pickedTime);
+          } else {
+            endTime = pickedTime;
+            eventEnd = join(eventEnd, pickedTime);
+          }
           String formattedTime = pickedTime.format(context);
           controller.text = formattedTime;
         }

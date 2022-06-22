@@ -245,9 +245,9 @@ class _ProfileState extends State<Profile> {
         child: CircleAvatar(
           backgroundImage: userData!.user_photo!.isNotEmpty
               ? NetworkImage('${userData.user_photo}')
-              : const AssetImage('assets/logo.png') as ImageProvider,
+              : const AssetImage('assets/umt_logo.png') as ImageProvider,
           radius: 55.0,
-          backgroundColor: Colors.blue,
+          backgroundColor: Colors.white,
           child: Stack(
             children: const [
               Align(

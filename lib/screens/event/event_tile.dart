@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:scms/models/event.dart';
 import 'package:scms/screens/event/edit_event.dart';
-import 'package:scms/services/club_database.dart';
+import 'package:scms/services/event_database.dart';
 import 'package:scms/shared/constants.dart';
 
 class EventTile extends StatelessWidget {
@@ -121,7 +120,7 @@ class EventTile extends StatelessWidget {
                             actions: [
                               TextButton(
                                   onPressed: () {
-                                    ClubDatabaseService(
+                                    EventDatabaseService(
                                             cid: club_ID,
                                             eid: eventData.event_ID)
                                         .deleteEventPost()

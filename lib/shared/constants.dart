@@ -212,3 +212,42 @@ DecoratedBox buildGradientLine(Color leftColor, Color rightColor) {
     ),
   );
 }
+
+final List<String> category = [
+  'Theatre Club',
+  'Debate Club',
+  'Student Council',
+  'Sport Club',
+  'Religious Club',
+  'Community Service Club',
+  'Course Academic Club',
+  'Performance Club',
+  'Recreation Club',
+  'Music Club',
+  'Arts Club',
+  'Dance Club'
+];
+
+final List<String> audienceList = ['Public', 'Private'];
+
+final List<String> genderGroup = ['', 'Male', 'Female'];
+
+final List<String> stateGroup = [
+  '',
+  'Johor',
+  'Kedah',
+  'Kelantan',
+  'Malacca',
+  'Negeri Sembilan',
+  'Pahang',
+  'Penang',
+  'Perak',
+  'Perlis',
+  'Sabah',
+  'Sarawak',
+  'Selangor',
+  'Terengganu',
+  'Kuala Lumpur',
+  'Labuan',
+  'Putrajaya'
+];

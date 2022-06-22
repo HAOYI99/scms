@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:scms/models/user.dart';
+import 'package:scms/models/club.dart';
+import 'package:scms/models/event.dart';
 import 'package:scms/screens/home/home_list.dart';
+import 'package:scms/services/club_database.dart';
+import 'package:scms/services/event_database.dart';
 import 'package:scms/shared/constants.dart';
 
 enum EventPostSwitch { discover, follow }
@@ -15,50 +18,54 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   EventPostSwitch selectedEventSwitch = EventPostSwitch.discover;
-  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<thisUser?>(context);
-    return isLoading
-        ? loadingIndicator()
-        : Scaffold(
-            appBar: AppBar(
-              centerTitle: true,
-              title: const Text('Event',
-                  style: TextStyle(
-                      color: Colors.blue,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20.0)),
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-            ),
-            backgroundColor: Colors.white,
-            body: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Row(
-                    children: <Widget>[
-                      ContainerSelection(
-                          context, EventPostSwitch.discover, 'Discover'),
-                      ContainerSelection(
-                          context, EventPostSwitch.follow, 'Followed'),
-                    ],
-                  ),
-                  buildGradientLine(
-                    selectedEventSwitch == EventPostSwitch.discover
-                        ? Colors.blue
-                        : Colors.white,
-                    selectedEventSwitch == EventPostSwitch.follow
-                        ? Colors.blue
-                        : Colors.white,
-                  ),
-                  Container(child: getCustomContainer()),
-                  const SizedBox(height: 10.0)
+    return MultiProvider(
+      providers: [
+        StreamProvider<List<EventData>>.value(
+            value: EventDatabaseService().eventdata, initialData: []),
+        StreamProvider<List<ClubData>>.value(
+            value: ClubDatabaseService().clubdatalist, initialData: []),
+      ],
+      child: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: const Text('Event',
+              style: TextStyle(
+                  color: Colors.blue,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20.0)),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+        ),
+        backgroundColor: Colors.white,
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              Row(
+                children: <Widget>[
+                  ContainerSelection(
+                      context, EventPostSwitch.discover, 'Discover'),
+                  ContainerSelection(
+                      context, EventPostSwitch.follow, 'Followed'),
                 ],
               ),
-            ),
-          );
+              buildGradientLine(
+                selectedEventSwitch == EventPostSwitch.discover
+                    ? Colors.blue
+                    : Colors.white,
+                selectedEventSwitch == EventPostSwitch.follow
+                    ? Colors.blue
+                    : Colors.white,
+              ),
+              Container(child: getCustomContainer()),
+              const SizedBox(height: 10.0)
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Container ContainerSelection(
@@ -87,9 +94,9 @@ class _HomeState extends State<Home> {
   Widget getCustomContainer() {
     switch (selectedEventSwitch) {
       case EventPostSwitch.discover:
-        return HomeList(isFollowed: false);
+        return HomeList();
       case EventPostSwitch.follow:
-        return HomeList(isFollowed: true);
+        return HomeList();
     }
   }
 }

@@ -25,8 +25,8 @@ class _ClubState extends State<Club> {
     return StreamProvider<List<ClubData>>.value(
       initialData: [],
       value: (selectedClubSwitch == ClubSwitch.allclub)
-          ? ClubDatabaseService().clubdata
-          : ClubDatabaseService(uid: user!.uid).clubdata,
+          ? ClubDatabaseService().clubdatalist
+          : ClubDatabaseService(uid: user!.uid).clubdatalist,
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(

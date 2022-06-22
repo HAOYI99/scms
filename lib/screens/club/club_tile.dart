@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:scms/models/club.dart';
 import 'package:scms/models/user.dart';
 import 'package:scms/screens/club/edit_club.dart';
-import 'package:scms/screens/club/edit_clublogo.dart';
+import 'package:scms/screens/club/club_logo.dart';
+import 'package:scms/screens/committee/committee.dart';
 import 'package:scms/screens/event/event.dart';
 import 'package:scms/services/user_database.dart';
 
 class ClubTile extends StatelessWidget {
   final ClubData clubData;
   final bool isMyClub;
-  ClubTile({Key? key, required this.clubData, required this.isMyClub}) : super(key: key);
+  ClubTile({Key? key, required this.clubData, required this.isMyClub})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,7 @@ class ClubTile extends StatelessWidget {
               child: CircleAvatar(
                 backgroundImage: clubData.club_logo!.isNotEmpty
                     ? NetworkImage(clubData.club_logo!)
-                    : const AssetImage('assets/logo.png') as ImageProvider,
+                    : const AssetImage('assets/umt_logo.png') as ImageProvider,
                 radius: 25.0,
                 backgroundColor: Colors.white,
               ),
@@ -34,7 +36,9 @@ class ClubTile extends StatelessWidget {
             title: Text(clubData.club_name!),
             subtitle: Text(clubData.club_ID!),
             iconColor: Colors.blue,
-            trailing: isMyClub ? const Icon(Icons.edit) : const Icon(Icons.expand_more),
+            trailing: isMyClub
+                ? const Icon(Icons.edit)
+                : const Icon(Icons.expand_more),
           ),
         ),
         onTap: () {
@@ -98,25 +102,25 @@ class ClubTile extends StatelessWidget {
                       },
                     ),
                     InkWell(
-                      child: _buildListItem('Change Club Logo', context),
-                      onTap: () {
-                        Navigator.pop(context);
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  changeLogo(club_ID: clubData.club_ID!),
-                            ));
-                      },
-                    ),
-                    InkWell(
                       child: _buildListItem('Manage Event', context),
                       onTap: () {
                         Navigator.pop(context);
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => Event(club_ID: clubData.club_ID!,)));
+                                builder: (context) =>
+                                    Event(clubData: clubData)));
+                      },
+                    ),
+                    InkWell(
+                      child: _buildListItem('Manage Committee', context),
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    Committee(clubData: clubData)));
                       },
                     ),
                   ],
@@ -175,7 +179,8 @@ class ClubTile extends StatelessWidget {
                       child: Text(
                         clubData.club_name!,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 18.0, color: Colors.blue),
+                        style:
+                            const TextStyle(fontSize: 18.0, color: Colors.blue),
                       ),
                     ),
                     Column(
@@ -191,13 +196,27 @@ class ClubTile extends StatelessWidget {
                             builder: (context, snapshot) {
                               UserData? userData = snapshot.data;
                               if (userData != null) {
-                                return Text('Chairman : ${userData.user_name!} ${userData.user_lastName!}');
-                              }else{
+                                return Text(
+                                    'Chairman : ${userData.user_name!} ${userData.user_lastName!}');
+                              } else {
                                 return const Text('');
                               }
                             }),
                       ],
-                    )
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {},
+                      style: ElevatedButton.styleFrom(
+                        fixedSize:
+                            Size(MediaQuery.of(context).size.width * 0.9, 20),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0)),
+                      ),
+                      child: const Text(
+                        'Join Club',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
                   ],
                 ),
               ),

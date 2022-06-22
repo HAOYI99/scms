@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:scms/models/event.dart';
 import 'package:scms/screens/event/event_poster.dart';
-import 'package:scms/services/club_database.dart';
+import 'package:scms/services/event_database.dart';
 import 'package:scms/shared/constants.dart';
 
 class CreateEvents extends StatefulWidget {
@@ -25,7 +25,10 @@ class _CreateEventsState extends State<CreateEvents> {
   String formattedStartDate = '';
   String formattedEndDate = '';
 
-  final List<String> audienceList = ['Public', 'Private'];
+  DateTime eventStart = DateTime.now();
+  DateTime eventEnd = DateTime.now();
+  TimeOfDay startTime = TimeOfDay.now();
+  TimeOfDay endTime = TimeOfDay.now();
 
   TextEditingController titleController = TextEditingController();
   TextEditingController captionController = TextEditingController();
@@ -110,11 +113,11 @@ class _CreateEventsState extends State<CreateEvents> {
                               children: <Widget>[
                                 Flexible(
                                     child: buildTimeForm(startTimeController,
-                                        'Start Time', Icons.timelapse)),
+                                        'Start Time', Icons.timelapse, true)),
                                 SizedBox(width: horizontalSpace),
                                 Flexible(
                                     child: buildTimeForm(endTimeController,
-                                        'End Time', Icons.timelapse))
+                                        'End Time', Icons.timelapse, false))
                               ],
                             ),
                             const SizedBox(height: 20.0),
@@ -144,16 +147,14 @@ class _CreateEventsState extends State<CreateEvents> {
                                       event_title: titleController.text,
                                       event_caption: captionController.text,
                                       event_location: locationController.text,
-                                      event_startDate: formattedStartDate,
-                                      event_endDate: formattedEndDate,
-                                      event_startTime: startTimeController.text,
-                                      event_endTime: startTimeController.text,
+                                      event_start: eventStart.toString(),
+                                      event_end: eventEnd.toString(),
                                       event_audience: audienceController.text,
                                       event_numAudience: int.parse(
                                           numberAudienceController.text),
                                     );
                                     dynamic result =
-                                        ClubDatabaseService(cid: widget.club_ID)
+                                        EventDatabaseService(cid: widget.club_ID)
                                             .createEvents(
                                                 eventData, _imageFile, context)
                                             .whenComplete(() {
@@ -192,6 +193,10 @@ class _CreateEventsState extends State<CreateEvents> {
           );
   }
 
+  DateTime join(DateTime date, TimeOfDay time) {
+    return DateTime(date.year, date.month, date.day, time.hour, time.minute);
+  }
+
   TextFormField buildForm(TextEditingController controller, String hintText,
       String? validator(value), IconData icon) {
     return TextFormField(
@@ -214,13 +219,13 @@ class _CreateEventsState extends State<CreateEvents> {
       readOnly: true,
       onTap: () async {
         final pickedDate = await showDateRangePicker(
-            initialDateRange: DateTimeRange(
-                start: DateTime.now(),
-                end: DateTime.now().add(const Duration(hours: 24 * 3))),
+            initialDateRange: DateTimeRange(start: eventStart, end: eventEnd),
             context: context,
             firstDate: DateTime.now(),
             lastDate: DateTime(DateTime.now().year + 5));
         if (pickedDate != null) {
+          eventStart = pickedDate.start;
+          eventEnd = pickedDate.end;
           formattedStartDate =
               DateFormat('dd-MMM-yyyy').format(pickedDate.start);
           formattedEndDate = DateFormat('dd-MMM-yyyy').format(pickedDate.end);
@@ -237,8 +242,8 @@ class _CreateEventsState extends State<CreateEvents> {
     );
   }
 
-  TextFormField buildTimeForm(
-      TextEditingController controller, String labelText, IconData icons) {
+  TextFormField buildTimeForm(TextEditingController controller,
+      String labelText, IconData icons, bool isStartTime) {
     return TextFormField(
       controller: controller,
       readOnly: true,
@@ -247,7 +252,7 @@ class _CreateEventsState extends State<CreateEvents> {
       onTap: () async {
         final pickedTime = await showTimePicker(
           context: context,
-          initialTime: TimeOfDay.now(),
+          initialTime: isStartTime ? startTime : endTime,
           builder: (BuildContext context, Widget? child) {
             return MediaQuery(
               data:
@@ -257,6 +262,13 @@ class _CreateEventsState extends State<CreateEvents> {
           },
         );
         if (pickedTime != null) {
+          if (isStartTime) {
+            startTime = pickedTime;
+            eventStart = join(eventStart, pickedTime);
+          } else {
+            endTime = pickedTime;
+            eventEnd = join(eventEnd, pickedTime);
+          }
           String formattedTime = pickedTime.format(context);
           controller.text = formattedTime;
         }

@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:scms/models/club.dart';
+import 'package:scms/screens/club/club_logo.dart';
 import 'package:scms/services/club_database.dart';
 import 'package:scms/shared/constants.dart';
 
@@ -16,20 +19,20 @@ class EditClub extends StatefulWidget {
 class _EditClubState extends State<EditClub> {
   final _formKey = GlobalKey<FormState>();
   bool isLoading = false;
-  String error = '';
-
   bool isFirstLoad = true;
-
-  final List<String> category = ['test', 'test2'];
+  String error = '';
+  String noImageSelect = '';
 
   //controller
   TextEditingController nameController = TextEditingController();
   TextEditingController descController = TextEditingController();
   TextEditingController categoryController = TextEditingController();
   TextEditingController emailController = TextEditingController();
+  File? _imageFile;
 
   @override
   Widget build(BuildContext context) {
+    category.sort();
     if (isFirstLoad) {
       nameController.text = widget.clubData.club_name!;
       emailController.text = widget.clubData.club_email!;
@@ -38,7 +41,7 @@ class _EditClubState extends State<EditClub> {
       isFirstLoad = false;
     }
     return isLoading
-        ? loadingIndicator() 
+        ? loadingIndicator()
         : Scaffold(
             backgroundColor: Colors.white,
             appBar: buildAppBar(context, 'Edit Club'),
@@ -53,6 +56,39 @@ class _EditClubState extends State<EditClub> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
+                        InkWell(
+                          onTap: () async {
+                            if (_imageFile == null) {
+                              final imageFile = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => clubLogo()),
+                              );
+                              setState(() {
+                                _imageFile = imageFile;
+                              });
+                            } else {
+                              final imageFile = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        clubLogo(selectImage: _imageFile)),
+                              );
+                              setState(() {
+                                _imageFile = imageFile;
+                              });
+                            }
+                          },
+                          child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(color: Colors.blue)),
+                              height: 200,
+                              child: _imageFile == null
+                                  ? Image.network(
+                                      '${widget.clubData.club_logo}')
+                                  : Image.file(_imageFile!, fit: BoxFit.fill)),
+                        ),
                         const SizedBox(height: 20.0),
                         buildForm(nameController, 'Club Name',
                             clubNameValidator, Icons.groups_rounded),
@@ -70,29 +106,38 @@ class _EditClubState extends State<EditClub> {
                                 color: Colors.red, fontSize: 14.0)),
                         ElevatedButton(
                           onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              setState(() => isLoading = true);
-                              ClubData updatedClubData = ClubData();
-                              updatedClubData.club_ID = widget.clubData.club_ID;
-                              updatedClubData.club_name = nameController.text;
-                              updatedClubData.club_desc = descController.text;
-                              updatedClubData.club_email = emailController.text;
-                              updatedClubData.club_category =
-                                  categoryController.text;
-                              dynamic result = await ClubDatabaseService()
-                                  .updateClubData(updatedClubData)
-                                  .whenComplete(() {
-                                showSuccessSnackBar(
-                                    'Club Updated Successfully !', context);
-                                Navigator.of(context).pop();
-                              }).catchError((e) => showFailedSnackBar(
-                                      e.toString(), context));
-                              if (result == null) {
-                                setState(() {
-                                  error =
-                                      'Could not update club, please try again';
-                                  isLoading = false;
-                                });
+                            if (_imageFile == null &&
+                                widget.clubData.club_logo == null) {
+                              setState(() {
+                                noImageSelect = 'Event Poster is required !';
+                              });
+                            } else {
+                              if (_formKey.currentState!.validate()) {
+                                setState(() => isLoading = true);
+                                ClubData updatedClubData = ClubData();
+                                updatedClubData.club_name = nameController.text;
+                                updatedClubData.club_desc = descController.text;
+                                updatedClubData.club_email =
+                                    emailController.text;
+                                updatedClubData.club_category =
+                                    categoryController.text;
+                                dynamic result = await ClubDatabaseService(
+                                        cid: widget.clubData.club_ID)
+                                    .updateClubData(
+                                        updatedClubData, _imageFile, context)
+                                    .whenComplete(() {
+                                  showSuccessSnackBar(
+                                      'Club Updated Successfully !', context);
+                                  Navigator.of(context).pop();
+                                }).catchError((e) => showFailedSnackBar(
+                                        e.toString(), context));
+                                if (result == null) {
+                                  setState(() {
+                                    error =
+                                        'Could not update club, please try again';
+                                    isLoading = false;
+                                  });
+                                }
                               }
                             }
                           },

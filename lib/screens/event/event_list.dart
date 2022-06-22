@@ -17,21 +17,50 @@ class _EventListState extends State<EventList> {
   @override
   Widget build(BuildContext context) {
     final events = Provider.of<List<EventData>>(context);
-    events.sort((a, b) {
-      return a.event_endTime!.compareTo(b.event_endTime!);
-    });
     if (events.isNotEmpty) {
-      return ListView.builder(
-        physics: const NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        itemCount: events.length,
-        itemBuilder: (context, index) {
-          return EventTile(
-              club_ID: widget.club_ID,
-              eventData: events[index],
-              isExpired: widget.isExpired);
-        },
-      );
+      List<EventData> upcomingEvent = [];
+      List<EventData> expiredEvent = [];
+      for (var i = 0; i < events.length; i++) {
+        //if the end time is before now (expired)
+        if (DateTime.parse(events[i].event_end!).compareTo(DateTime.now()) <
+            0) {
+          expiredEvent.add(events[i]);
+          expiredEvent.sort((a, b) {
+            return b.event_end!.compareTo(a.event_end!);
+          });
+        } else {
+          //if the end time is after now (upcoming)
+          upcomingEvent.add(events[i]);
+          upcomingEvent.sort((a, b) {
+            return b.event_end!.compareTo(a.event_end!);
+          });
+        }
+      }
+      if (widget.isExpired) {
+        return ListView.builder(
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: expiredEvent.length,
+          itemBuilder: (context, index) {
+            return EventTile(
+                club_ID: widget.club_ID,
+                eventData: expiredEvent[index],
+                isExpired: widget.isExpired);
+          },
+        );
+      } else {
+        return ListView.builder(
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: upcomingEvent.length,
+          itemBuilder: (context, index) {
+            return EventTile(
+                club_ID: widget.club_ID,
+                eventData: upcomingEvent[index],
+                isExpired: widget.isExpired);
+          },
+        );
+      }
     } else {
       return Padding(
         padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.3),

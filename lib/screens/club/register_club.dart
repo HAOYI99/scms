@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -5,6 +7,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:provider/provider.dart';
 import 'package:scms/models/club.dart';
 import 'package:scms/models/user.dart';
+import 'package:scms/screens/club/club_logo.dart';
 import 'package:scms/services/club_database.dart';
 import 'package:scms/shared/constants.dart';
 
@@ -19,18 +22,18 @@ class _RegisterClubState extends State<RegisterClub> {
   final _formKey = GlobalKey<FormState>();
   bool isLoading = false;
   bool _checked = false;
-  final List<String> category = ['test', 'test2'];
-
+  String noImageSelect = '';
   final TextEditingController nameController = TextEditingController();
   final TextEditingController descController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController categoryController = TextEditingController();
   String error = '';
+  File? _imageFile;
 
   @override
   Widget build(BuildContext context) {
+    category.sort();
     final user = Provider.of<thisUser?>(context);
-
     return isLoading
         ? loadingIndicator()
         : Scaffold(
@@ -47,6 +50,42 @@ class _RegisterClubState extends State<RegisterClub> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
+                        InkWell(
+                          onTap: () async {
+                            if (_imageFile == null) {
+                              final imageFile = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => clubLogo()),
+                              );
+                              setState(() {
+                                _imageFile = imageFile;
+                              });
+                            } else {
+                              final imageFile = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        clubLogo(selectImage: _imageFile)),
+                              );
+                              setState(() {
+                                _imageFile = imageFile;
+                              });
+                            }
+                          },
+                          child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(color: Colors.blue)),
+                              height: 200,
+                              child: _imageFile == null
+                                  ? const Center(
+                                      child: Text('No Image Selected'))
+                                  : Image.file(_imageFile!, fit: BoxFit.fill)),
+                        ),
+                        Text(noImageSelect,
+                            style: const TextStyle(
+                                color: Colors.red, fontSize: 14.0)),
                         const SizedBox(height: 20.0),
                         buildForm(nameController, 'Club Name',
                             clubNameValidator, Icons.groups_rounded),
@@ -76,39 +115,47 @@ class _RegisterClubState extends State<RegisterClub> {
                         ),
                         ElevatedButton(
                           onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              if (_checked) {
-                                setState(() => isLoading = true);
-                                String registerDate = DateFormat('dd-MMM-yyyy')
-                                    .format(DateTime.now());
-                                ClubData clubData = ClubData(
-                                  club_name: nameController.text,
-                                  club_email: emailController.text,
-                                  club_desc: descController.text,
-                                  club_category: categoryController.text,
-                                  club_registerDate: registerDate,
-                                  club_chairman: user!.uid!,
-                                );
-                                dynamic result =
-                                    await ClubDatabaseService(uid: user.uid)
-                                        .createClubData(clubData)
-                                        .whenComplete(() {
-                                  showSuccessSnackBar(
-                                      'Club Registered !', context);
-                                }).catchError((e) => showFailedSnackBar(
-                                            e.toString(), context));
-                                Navigator.of(context).pop();
-                                if (result == null) {
-                                  setState(() {
-                                    error =
-                                        'Could not register a club, please try again';
-                                    isLoading = false;
-                                  });
+                            if (_imageFile == null) {
+                              setState(() {
+                                noImageSelect = 'Club Logo is required !';
+                              });
+                            } else {
+                              if (_formKey.currentState!.validate()) {
+                                if (_checked) {
+                                  setState(() => isLoading = true);
+                                  String registerDate =
+                                      DateFormat('dd-MMM-yyyy')
+                                          .format(DateTime.now());
+                                  ClubData clubData = ClubData(
+                                    club_name: nameController.text,
+                                    club_email: emailController.text,
+                                    club_desc: descController.text,
+                                    club_category: categoryController.text,
+                                    club_registerDate: registerDate,
+                                    club_chairman: user!.uid!,
+                                  );
+                                  dynamic result =
+                                      await ClubDatabaseService(uid: user.uid)
+                                          .createClubData(
+                                              clubData, _imageFile, context)
+                                          .whenComplete(() {
+                                    showSuccessSnackBar(
+                                        'Club Registered !', context);
+                                  }).catchError((e) => showFailedSnackBar(
+                                              e.toString(), context));
+                                  Navigator.of(context).pop();
+                                  if (result == null) {
+                                    setState(() {
+                                      error =
+                                          'Could not register a club, please try again';
+                                      isLoading = false;
+                                    });
+                                  }
+                                } else {
+                                  showFailedSnackBar(
+                                      'Make sure you checked the acknowledgement',
+                                      context);
                                 }
-                              } else {
-                                showFailedSnackBar(
-                                    'Make sure you checked the acknowledgement',
-                                    context);
                               }
                             }
                           },

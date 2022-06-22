@@ -43,7 +43,7 @@ class _SignInState extends State<SignIn> {
                         SizedBox(
                           height: 200,
                           child: Image.asset(
-                            'assets/logo.png',
+                            'assets/umt_logo.png',
                             fit: BoxFit.contain,
                           ),
                         ),
