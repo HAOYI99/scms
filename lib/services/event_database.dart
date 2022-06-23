@@ -5,11 +5,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:scms/models/event.dart';
 
-//clubs/{clubID}/events/{eventID}
 class EventDatabaseService {
   final String? eid;
   final String? cid;
-  EventDatabaseService({this.eid, this.cid});
+  final String? uid;
+  final String? rid;
+  EventDatabaseService({this.eid, this.cid, this.uid, this.rid});
 
   //collection reference
   final CollectionReference eventCollection =
@@ -94,6 +95,7 @@ class EventDatabaseService {
           .ref()
           .child('clubs')
           .child('${cid!}/event')
+          .child(id)
           .child("post_$postID");
 
       await ref.putFile(image!);
@@ -113,5 +115,60 @@ class EventDatabaseService {
     DocumentReference eventDocument = eventCollection.doc(eid);
     return await FirebaseFirestore.instance.runTransaction(
         (transaction) async => transaction.delete(eventDocument));
+  }
+
+  //registration.......................................................
+  
+  final CollectionReference registerCollection =
+      FirebaseFirestore.instance.collection('registers');
+
+  Future registerEvent(String register_time) async {
+    return await registerCollection.doc().set({
+      'event_ID': eid,
+      'user_ID': uid,
+      'register_time': register_time,
+    });
+  }
+
+  Future cancelRegistration() async {
+    DocumentReference registerDocument = registerCollection.doc(rid);
+    return await FirebaseFirestore.instance.runTransaction(
+        (transaction) async => transaction.delete(registerDocument));
+  }
+
+  RegisterData _registerDataFromSnapshot(DocumentSnapshot snapshot) {
+    return RegisterData(
+      register_ID: rid,
+      event_ID: snapshot['event_ID'],
+      user_ID: snapshot['user_ID'],
+      register_time: snapshot['register_time'],
+    );
+  }
+
+  List<RegisterData> _registerListFromSnapshot(QuerySnapshot snapshot) {
+    try {
+      return snapshot.docs.map((doc) {
+        return RegisterData(
+          register_ID: doc.id,
+          event_ID: doc.get('event_ID'),
+          user_ID: doc.get('user_ID'),
+          register_time: doc.get('register_time'),
+        );
+      }).toList();
+    } catch (e) {
+      debugPrint(e.toString());
+      return [];
+    }
+  }
+
+  Stream<List<RegisterData>> get registerDatalist {
+    return registerCollection.snapshots().map(_registerListFromSnapshot);
+  }
+
+  Stream<RegisterData> get registerdata {
+    return registerCollection
+        .doc(rid)
+        .snapshots()
+        .map(_registerDataFromSnapshot);
   }
 }

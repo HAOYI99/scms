@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scms/models/club.dart';
 import 'package:scms/models/event.dart';
+import 'package:scms/models/user.dart';
 import 'package:scms/screens/home/home_tile.dart';
 
 class HomeList extends StatefulWidget {
@@ -16,6 +17,9 @@ class HomeListState extends State<HomeList> {
   Widget build(BuildContext context) {
     final events = Provider.of<List<EventData>>(context);
     final clubs = Provider.of<List<ClubData>>(context);
+    final registerData = Provider.of<List<RegisterData>>(context);
+    final user = Provider.of<thisUser>(context);
+
     if (events.isNotEmpty) {
       return ListView.builder(
         physics: const NeverScrollableScrollPhysics(),
@@ -28,6 +32,9 @@ class HomeListState extends State<HomeList> {
           return HomeTile(
             eventData: events[index],
             clubData: getTheClub(clubs, events[index]),
+            isRegistered: isRegistered(registerData, events[index], user),
+            isRegistrationClosed:
+                isRegistrationClosed(registerData, events[index]),
           );
         },
       );
@@ -51,5 +58,31 @@ class HomeListState extends State<HomeList> {
       }
     }
     return theClub;
+  }
+
+  bool isRegistered(
+      List<RegisterData> registerData, EventData event, thisUser user) {
+    for (var i = 0; i < registerData.length; i++) {
+      if (event.event_ID == registerData[i].event_ID &&
+          registerData[i].user_ID == user.uid) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  bool isRegistrationClosed(List<RegisterData> registerData, EventData event) {
+    var count = 0;
+    var numAudience = event.event_numAudience?.toInt() ?? 0;
+    for (var i = 0; i < registerData.length; i++) {
+      if (event.event_ID == registerData[i].event_ID) {
+        count++;
+      }
+    }
+    if (count < numAudience) {
+      return false;
+    } else {
+      return true;
+    }
   }
 }

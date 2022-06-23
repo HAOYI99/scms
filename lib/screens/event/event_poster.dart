@@ -6,9 +6,8 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:scms/shared/constants.dart';
 
 class eventPoster extends StatefulWidget {
-  String? eventID;
   File? selectImage;
-  eventPoster({Key? key, this.eventID, this.selectImage}) : super(key: key);
+  eventPoster({Key? key, this.selectImage}) : super(key: key);
 
   @override
   State<eventPoster> createState() => _eventPosterState();
@@ -35,7 +34,7 @@ class _eventPosterState extends State<eventPoster> {
             appBar: AppBar(
               centerTitle: true,
               title: Text(
-                  widget.eventID == null
+                  widget.selectImage == null
                       ? 'Select Event Poster'
                       : 'Change Event Poster',
                   style: const TextStyle(

@@ -21,26 +21,28 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        StreamProvider<List<EventData>>.value(
-            value: EventDatabaseService().eventdata, initialData: []),
-        StreamProvider<List<ClubData>>.value(
-            value: ClubDatabaseService().clubdatalist, initialData: []),
-      ],
-      child: Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: const Text('Event',
-              style: TextStyle(
-                  color: Colors.blue,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20.0)),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-        ),
-        backgroundColor: Colors.white,
-        body: SingleChildScrollView(
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: const Text('Event',
+            style: TextStyle(
+                color: Colors.blue,
+                fontWeight: FontWeight.bold,
+                fontSize: 20.0)),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      backgroundColor: Colors.white,
+      body: MultiProvider(
+        providers: [
+          StreamProvider<List<EventData>>.value(
+              value: EventDatabaseService().eventdata, initialData: []),
+          StreamProvider<List<ClubData>>.value(
+              value: ClubDatabaseService().clubdatalist, initialData: []),
+          StreamProvider<List<RegisterData>>.value(
+              value: EventDatabaseService().registerDatalist, initialData: []),
+        ],
+        child: SingleChildScrollView(
           child: Column(
             children: [
               Row(

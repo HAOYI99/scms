@@ -23,3 +23,13 @@ class EventData {
     this.club_ID,
   });
 }
+
+class RegisterData {
+  String? register_ID;
+  String? event_ID;
+  String? user_ID;
+  String? register_time;
+
+  RegisterData(
+      {this.register_ID, this.event_ID, this.user_ID, this.register_time});
+}

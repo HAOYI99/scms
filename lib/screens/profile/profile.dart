@@ -23,7 +23,6 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<thisUser?>(context);
-
     return isLoading
         ? loadingIndicator()
         : Scaffold(

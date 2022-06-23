@@ -8,7 +8,8 @@ import 'package:scms/models/club.dart';
 class ClubDatabaseService {
   final String? uid;
   final String? cid;
-  ClubDatabaseService({this.uid, this.cid});
+  final String? cmid;
+  ClubDatabaseService({this.uid, this.cid, this.cmid});
 
   //collection reference
   final CollectionReference clubCollection =
@@ -114,5 +115,72 @@ class ClubDatabaseService {
     } else {
       return null;
     }
+  }
+
+  //committee member......................................................
+
+  final CollectionReference committeeCollection =
+      FirebaseFirestore.instance.collection('committee');
+
+  Future requestJoinClub() async {
+    return await committeeCollection.doc().set({
+      'club_ID': cid,
+      'user_ID': uid,
+      'isApproved': false,
+      'approved_by': '',
+      'approved_date': '',
+      'position': 'member',
+    });
+  }
+
+  Future updateCommitteeData(CommitteeData committeeData) async {
+    return await committeeCollection.doc(cmid).update({
+      'isApproved': committeeData.isApproved,
+      'approved_by': committeeData.approved_by,
+      'approved_date': committeeData.approved_date,
+      'position': committeeData.position
+    });
+  }
+
+  CommitteeData _committeeDataFromSnapshot(DocumentSnapshot snapshot) {
+    return CommitteeData(
+      committee_ID: cmid,
+      club_ID: snapshot['club_ID'],
+      user_ID: snapshot['user_ID'],
+      isApproved: snapshot['isApproved'],
+      approved_by: snapshot['approved_by'],
+      approved_date: snapshot['approved_date'],
+      position: snapshot['position'],
+    );
+  }
+
+  List<CommitteeData> _committeeListFromSnapshot(QuerySnapshot snapshot) {
+    try {
+      return snapshot.docs.map((doc) {
+        return CommitteeData(
+          committee_ID: doc.id,
+          club_ID: doc.get('club_ID'),
+          user_ID: doc.get('user_ID'),
+          isApproved: doc.get('isApproved'),
+          approved_by: doc.get('approved_by'),
+          approved_date: doc.get('approved_date'),
+          position: doc.get('position'),
+        );
+      }).toList();
+    } catch (e) {
+      debugPrint(e.toString());
+      return [];
+    }
+  }
+
+  Stream<List<CommitteeData>> get committeeDatalist {
+    return committeeCollection.snapshots().map(_committeeListFromSnapshot);
+  }
+
+  Stream<CommitteeData> get committeedata {
+    return committeeCollection
+        .doc(cmid)
+        .snapshots()
+        .map(_committeeDataFromSnapshot);
   }
 }

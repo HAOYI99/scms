@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:scms/models/club.dart';
@@ -19,42 +20,48 @@ class Club extends StatefulWidget {
 
 class _ClubState extends State<Club> {
   ClubSwitch selectedClubSwitch = ClubSwitch.allclub;
+
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<thisUser?>(context);
-    return StreamProvider<List<ClubData>>.value(
-      initialData: [],
-      value: (selectedClubSwitch == ClubSwitch.allclub)
-          ? ClubDatabaseService().clubdatalist
-          : ClubDatabaseService(uid: user!.uid).clubdatalist,
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          centerTitle: true,
-          title: const Text('Club',
-              style: TextStyle(
-                  color: Colors.blue,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20.0)),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          actions: [
-            IconButton(
-                tooltip: 'Register Club',
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => RegisterClub(),
-                      ));
-                },
-                icon: const Icon(
-                  MdiIcons.feather,
-                  color: Colors.blue,
-                ))
-          ],
-        ),
-        body: SingleChildScrollView(
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        centerTitle: true,
+        title: const Text('Club',
+            style: TextStyle(
+                color: Colors.blue,
+                fontWeight: FontWeight.bold,
+                fontSize: 20.0)),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: [
+          IconButton(
+              tooltip: 'Register Club',
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => RegisterClub(),
+                    ));
+              },
+              icon: const Icon(
+                MdiIcons.feather,
+                color: Colors.blue,
+              ))
+        ],
+      ),
+      body: MultiProvider(
+        providers: [
+          StreamProvider<List<ClubData>>.value(
+              initialData: [],
+              value: (selectedClubSwitch == ClubSwitch.allclub)
+                  ? ClubDatabaseService().clubdatalist
+                  : ClubDatabaseService(uid: user!.uid).clubdatalist),
+          StreamProvider<List<CommitteeData>>.value(
+              value: ClubDatabaseService().committeeDatalist, initialData: []),
+        ],
+        child: SingleChildScrollView(
           child: Column(
             children: [
               Row(

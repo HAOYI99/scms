@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scms/models/club.dart';
-import 'package:scms/models/committee.dart';
-import 'package:scms/services/committee_database.dart';
+import 'package:scms/services/club_database.dart';
 import 'package:scms/shared/constants.dart';
 
 enum CommitteeSwitch { member, pending }
@@ -19,34 +18,35 @@ class _CommitteeState extends State<Committee> {
   CommitteeSwitch selectedCommitteeSwitch = CommitteeSwitch.member;
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<List<CommitteeData>>.value(
-      initialData: [],
-      value: CommitteeDatabaseService(cid: widget.clubData.club_ID).committeedata,
-      child: Scaffold(
-        appBar: buildAppBar(context, 'Committee'),
-        backgroundColor: Colors.white,
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              Row(
-                children: <Widget>[
-                  ContainerSelection(context, CommitteeSwitch.member, 'Members'),
-                  ContainerSelection(context, CommitteeSwitch.pending, 'Request'),
-                ],
-              ),
-              buildGradientLine(
-                selectedCommitteeSwitch == CommitteeSwitch.member
-                    ? Colors.blue
-                    : Colors.white,
-                selectedCommitteeSwitch == CommitteeSwitch.pending
-                    ? Colors.blue
-                    : Colors.white,
-              ),
-              Container(child: getCustomContainer())
-            ],
-          ),
+    // return StreamProvider<List<CommitteeData>>.value(
+    //   initialData: [],
+    //   value: ClubDatabaseService(cid: widget.clubData.club_ID).committeedata,
+    // child:
+    return Scaffold(
+      appBar: buildAppBar(context, 'Committee'),
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Row(
+              children: <Widget>[
+                ContainerSelection(context, CommitteeSwitch.member, 'Members'),
+                ContainerSelection(context, CommitteeSwitch.pending, 'Request'),
+              ],
+            ),
+            buildGradientLine(
+              selectedCommitteeSwitch == CommitteeSwitch.member
+                  ? Colors.blue
+                  : Colors.white,
+              selectedCommitteeSwitch == CommitteeSwitch.pending
+                  ? Colors.blue
+                  : Colors.white,
+            ),
+            Container(child: getCustomContainer())
+          ],
         ),
       ),
+      // ),
     );
   }
 

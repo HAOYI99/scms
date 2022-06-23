@@ -1,15 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:scms/services/club_database.dart';
 import 'package:scms/shared/constants.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 
 class clubLogo extends StatefulWidget {
-  String? club_ID;
   File? selectImage;
-  clubLogo({Key? key, this.club_ID, this.selectImage}) : super(key: key);
+  clubLogo({Key? key, this.selectImage}) : super(key: key);
 
   @override
   State<clubLogo> createState() => _clubLogoState();
@@ -37,7 +35,7 @@ class _clubLogoState extends State<clubLogo> {
             appBar: AppBar(
               centerTitle: true,
               title: Text(
-                  widget.club_ID == null
+                  widget.selectImage == null
                       ? 'Select Club Logo'
                       : 'Change Club Logo',
                   style: const TextStyle(

@@ -1,12 +1,20 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:scms/models/club.dart';
 import 'package:scms/models/event.dart';
+import 'package:scms/screens/home/home_detail.dart';
 
 class HomeTile extends StatelessWidget {
   final EventData eventData;
   final ClubData clubData;
-  
-  const HomeTile({Key? key, required this.eventData, required this.clubData})
+  final bool isRegistered;
+  final bool isRegistrationClosed;
+  const HomeTile(
+      {Key? key,
+      required this.eventData,
+      required this.clubData,
+      required this.isRegistered,
+      required this.isRegistrationClosed})
       : super(key: key);
 
   @override
@@ -15,7 +23,17 @@ class HomeTile extends StatelessWidget {
       padding: const EdgeInsets.only(top: 8.0),
       child: GestureDetector(
         onTap: () {
-          
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EventDetail(
+                clubData: clubData,
+                eventData: eventData,
+                isRegistered: isRegistered,
+                isRegistrationClosed: isRegistrationClosed,
+              ),
+            ),
+          );
         },
         child: Card(
           shape: const RoundedRectangleBorder(
@@ -45,8 +63,18 @@ class HomeTile extends StatelessWidget {
                 iconColor: Colors.blue,
               ),
               Center(
-                  child: Image.network('${eventData.event_poster}',
-                      fit: BoxFit.fitWidth)),
+                child: Hero(
+                  tag: eventData.event_poster!,
+                  child: CachedNetworkImage(
+                    imageUrl: eventData.event_poster!,
+                    fit: BoxFit.fitWidth,
+                    placeholder: (context, url) =>
+                        const CircularProgressIndicator(),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.error, color: Colors.red, size: 30),
+                  ),
+                ),
+              ),
             ],
           ),
         ),

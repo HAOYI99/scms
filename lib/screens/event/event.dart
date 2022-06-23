@@ -21,45 +21,45 @@ class _EventState extends State<Event> {
   EventSwitch selectedEventSwitch = EventSwitch.upcoming;
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<List<EventData>>.value(
-      initialData: [],
-      value: EventDatabaseService(cid: widget.clubData.club_ID).eventdata,
-      child: Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: Text("${widget.clubData.club_name}'s Events",
-              overflow: TextOverflow.clip,
-              style: TextStyle(
-                  color: Colors.blue,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18.0)),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: IconButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            icon: const Icon(Icons.arrow_back, color: Colors.blue),
-          ),
-          actions: [
-            IconButton(
-                tooltip: 'Create New Event',
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            CreateEvents(club_ID: widget.clubData.club_ID!),
-                      ));
-                },
-                icon: const Icon(
-                  Icons.post_add,
-                  color: Colors.blue,
-                ))
-          ],
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text("${widget.clubData.club_name}'s Events",
+            overflow: TextOverflow.clip,
+            style: const TextStyle(
+                color: Colors.blue,
+                fontWeight: FontWeight.bold,
+                fontSize: 18.0)),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          icon: const Icon(Icons.arrow_back, color: Colors.blue),
         ),
-        backgroundColor: Colors.white,
-        body: SingleChildScrollView(
+        actions: [
+          IconButton(
+              tooltip: 'Create New Event',
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          CreateEvents(club_ID: widget.clubData.club_ID!),
+                    ));
+              },
+              icon: const Icon(
+                Icons.post_add,
+                color: Colors.blue,
+              ))
+        ],
+      ),
+      backgroundColor: Colors.white,
+      body: StreamProvider<List<EventData>>.value(
+        initialData: [],
+        value: EventDatabaseService(cid: widget.clubData.club_ID).eventdata,
+        child: SingleChildScrollView(
           child: Column(
             children: [
               Row(

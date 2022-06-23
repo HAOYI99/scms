@@ -1,20 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:scms/models/club.dart';
 import 'package:scms/models/user.dart';
 import 'package:scms/screens/club/edit_club.dart';
-import 'package:scms/screens/club/club_logo.dart';
 import 'package:scms/screens/committee/committee.dart';
 import 'package:scms/screens/event/event.dart';
+import 'package:scms/services/club_database.dart';
 import 'package:scms/services/user_database.dart';
+import 'package:scms/shared/constants.dart';
 
 class ClubTile extends StatelessWidget {
   final ClubData clubData;
   final bool isMyClub;
-  ClubTile({Key? key, required this.clubData, required this.isMyClub})
+  final bool isRequested;
+  final bool? isJoined;
+  ClubTile(
+      {Key? key,
+      required this.clubData,
+      required this.isMyClub,
+      required this.isRequested,
+      required this.isJoined})
       : super(key: key);
 
+  String buttonText = '';
   @override
   Widget build(BuildContext context) {
+    if (isRequested) {
+      isJoined! ? buttonText = 'Joined' : buttonText = 'Requested';
+    } else {
+      buttonText = 'Join';
+    }
+    final user = Provider.of<thisUser>(context);
     return Padding(
       padding: const EdgeInsets.only(top: 8.0),
       child: GestureDetector(
@@ -45,7 +61,7 @@ class ClubTile extends StatelessWidget {
           if (isMyClub) {
             _showEditPanel(clubData, context);
           } else {
-            _showClubInfo(clubData, context);
+            _showClubInfo(clubData, user, context, isJoined, isRequested);
           }
         },
       ),
@@ -145,7 +161,8 @@ class ClubTile extends StatelessWidget {
     );
   }
 
-  void _showClubInfo(ClubData clubData, BuildContext context) {
+  void _showClubInfo(ClubData clubData, thisUser user, BuildContext context,
+      bool? isJoined, bool isRequested) {
     showModalBottomSheet<dynamic>(
         context: context,
         isScrollControlled: true,
@@ -205,15 +222,42 @@ class ClubTile extends StatelessWidget {
                       ],
                     ),
                     ElevatedButton(
-                      onPressed: () async {},
+                      onPressed: () async {
+                        if (isRequested) {
+                          if (isJoined!) {
+                            Navigator.of(context).pop();
+                            showNormalSnackBar(
+                                'You are one of the member !', context);
+                          } else {
+                            Navigator.of(context).pop();
+                            showNormalSnackBar(
+                                'Already requested, please wait for their response',
+                                context);
+                          }
+                        } else {
+                          dynamic result = ClubDatabaseService(
+                                  cid: clubData.club_ID, uid: user.uid)
+                              .requestJoinClub()
+                              .whenComplete(() {
+                            showSuccessSnackBar('Request Sent !', context);
+                            Navigator.of(context).pop();
+                          }).catchError((e) =>
+                                  showFailedSnackBar(e.toString(), context));
+                          if (result == null) {
+                            showFailedSnackBar(
+                                'Could not join the club, please try again',
+                                context);
+                          }
+                        }
+                      },
                       style: ElevatedButton.styleFrom(
                         fixedSize:
                             Size(MediaQuery.of(context).size.width * 0.9, 20),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20.0)),
                       ),
-                      child: const Text(
-                        'Join Club',
+                      child: Text(
+                        buttonText,
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
