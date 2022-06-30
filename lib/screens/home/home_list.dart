@@ -80,7 +80,11 @@ class HomeListState extends State<HomeList> {
       }
     }
     if (count < numAudience) {
-      return false;
+      if (DateTime.parse(event.event_end!).compareTo(DateTime.now()) < 0) {
+        return true;
+      } else {
+        return false;
+      }
     } else {
       return true;
     }

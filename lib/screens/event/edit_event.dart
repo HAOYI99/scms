@@ -280,8 +280,7 @@ class _EditEventState extends State<EditEvent> {
           initialTime: isStartTime ? startTime : endTime,
           builder: (BuildContext context, Widget? child) {
             return MediaQuery(
-              data:
-                  MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+              data: MediaQuery.of(context),
               child: child!,
             );
           },

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:scms/models/access_right.dart';
 import 'package:scms/models/club.dart';
 import 'package:scms/models/user.dart';
 import 'package:scms/screens/club/club_list.dart';
 import 'package:scms/screens/club/register_club.dart';
+import 'package:scms/services/access_right_database.dart';
 import 'package:scms/services/club_database.dart';
 import 'package:scms/shared/constants.dart';
 
@@ -54,12 +55,17 @@ class _ClubState extends State<Club> {
       body: MultiProvider(
         providers: [
           StreamProvider<List<ClubData>>.value(
-              initialData: [],
-              value: (selectedClubSwitch == ClubSwitch.allclub)
-                  ? ClubDatabaseService().clubdatalist
-                  : ClubDatabaseService(uid: user!.uid).clubdatalist),
+              initialData: [], value: ClubDatabaseService().clubdatalist),
           StreamProvider<List<CommitteeData>>.value(
-              value: ClubDatabaseService().committeeDatalist, initialData: []),
+              initialData: [], value: ClubDatabaseService().committeeDatalist),
+          StreamProvider<List<PositionData>>.value(
+              initialData: [], value: ClubDatabaseService().positionDataList),
+          StreamProvider<List<function>>.value(
+              initialData: [],
+              value: AccessRightDatabaseService().functionlist),
+          StreamProvider<List<accessRight>>.value(
+              initialData: [],
+              value: AccessRightDatabaseService().accessdatalist),
         ],
         child: SingleChildScrollView(
           child: Column(

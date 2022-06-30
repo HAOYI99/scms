@@ -153,16 +153,16 @@ class _CreateEventsState extends State<CreateEvents> {
                                       event_numAudience: int.parse(
                                           numberAudienceController.text),
                                     );
-                                    dynamic result =
-                                        EventDatabaseService(cid: widget.club_ID)
-                                            .createEvents(
-                                                eventData, _imageFile, context)
-                                            .whenComplete(() {
+                                    dynamic result = EventDatabaseService(
+                                            cid: widget.club_ID)
+                                        .createEvents(
+                                            eventData, _imageFile, context)
+                                        .whenComplete(() {
                                       showSuccessSnackBar(
                                           'Event Published !', context);
                                       Navigator.of(context).pop();
                                     }).catchError((e) => showFailedSnackBar(
-                                                e.toString(), context));
+                                            e.toString(), context));
 
                                     if (result == null) {
                                       setState(() {
@@ -255,8 +255,7 @@ class _CreateEventsState extends State<CreateEvents> {
           initialTime: isStartTime ? startTime : endTime,
           builder: (BuildContext context, Widget? child) {
             return MediaQuery(
-              data:
-                  MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+              data: MediaQuery.of(context),
               child: child!,
             );
           },

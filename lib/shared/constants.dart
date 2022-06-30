@@ -31,6 +31,7 @@ AppBar buildAppBar(BuildContext context, String title) {
 }
 
 showNormalSnackBar(String snacktext, BuildContext context) {
+  ScaffoldMessenger.of(context).hideCurrentSnackBar();
   final snackBar = SnackBar(
     content: Row(
       children: [
@@ -50,6 +51,7 @@ showNormalSnackBar(String snacktext, BuildContext context) {
 }
 
 showSuccessSnackBar(String snacktext, BuildContext context) {
+  ScaffoldMessenger.of(context).hideCurrentSnackBar();
   final snackBar = SnackBar(
     content: Row(
       children: [
@@ -69,6 +71,7 @@ showSuccessSnackBar(String snacktext, BuildContext context) {
 }
 
 showFailedSnackBar(String snacktext, BuildContext context) {
+  ScaffoldMessenger.of(context).hideCurrentSnackBar();
   final snackBar = SnackBar(
     content: Row(
       children: [

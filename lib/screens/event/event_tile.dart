@@ -34,7 +34,7 @@ class EventTile extends StatelessWidget {
         ),
         onTap: () {
           if (isExpired) {
-            // _showClubInfo(clubData, context);
+            _showEditPanel(eventData, context);
           } else {
             _showEditPanel(eventData, context);
           }
@@ -113,9 +113,9 @@ class EventTile extends StatelessWidget {
                           context: context,
                           builder: (BuildContext context) => AlertDialog(
                             title:
-                                const Text('Are you sure you want to do this?'),
-                            content:
                                 const Text('This action is irreversible !'),
+                            content:
+                                const Text('Are you sure you want to do this?'),
                             elevation: 3.0,
                             actions: [
                               TextButton(

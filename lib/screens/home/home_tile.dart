@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:scms/models/club.dart';
 import 'package:scms/models/event.dart';
 import 'package:scms/screens/home/home_detail.dart';
@@ -59,7 +60,8 @@ class HomeTile extends StatelessWidget {
                   ),
                 ),
                 title: Text('${eventData.event_title}'),
-                subtitle: Text('${clubData.club_email}'),
+                subtitle: Text(
+                    '${DateFormat('dd-MMM-yyyy').format(DateTime.parse(eventData.event_start!))} - ${DateFormat('dd-MMM-yyyy').format(DateTime.parse(eventData.event_end!))}'),
                 iconColor: Colors.blue,
               ),
               Center(

@@ -7,7 +7,7 @@ import 'package:scms/models/user.dart';
 
 class UserDatabaseService {
   final String? uid;
-  UserDatabaseService({required this.uid});
+  UserDatabaseService({this.uid});
 
   //collection reference
   final CollectionReference userCollection =

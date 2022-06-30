@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:scms/models/access_right.dart';
 import 'package:scms/models/club.dart';
 import 'package:scms/models/user.dart';
 import 'package:scms/screens/club/club_logo.dart';
+import 'package:scms/services/access_right_database.dart';
 import 'package:scms/services/club_database.dart';
 import 'package:scms/shared/constants.dart';
 
@@ -34,155 +36,162 @@ class _RegisterClubState extends State<RegisterClub> {
   Widget build(BuildContext context) {
     category.sort();
     final user = Provider.of<thisUser?>(context);
-    return isLoading
-        ? loadingIndicator()
-        : Scaffold(
-            backgroundColor: Colors.white,
-            appBar: buildAppBar(context, 'Club Registration'),
-            body: Center(
-              child: SingleChildScrollView(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 20.0, horizontal: 50.0),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        InkWell(
-                          onTap: () async {
-                            if (_imageFile == null) {
-                              final imageFile = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => clubLogo()),
-                              );
-                              setState(() {
-                                _imageFile = imageFile;
-                              });
-                            } else {
-                              final imageFile = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        clubLogo(selectImage: _imageFile)),
-                              );
-                              setState(() {
-                                _imageFile = imageFile;
-                              });
-                            }
-                          },
-                          child: Container(
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(color: Colors.blue)),
-                              height: 200,
-                              child: _imageFile == null
-                                  ? const Center(
-                                      child: Text('No Image Selected'))
-                                  : Image.file(_imageFile!, fit: BoxFit.fill)),
-                        ),
-                        Text(noImageSelect,
-                            style: const TextStyle(
-                                color: Colors.red, fontSize: 14.0)),
-                        const SizedBox(height: 20.0),
-                        buildForm(nameController, 'Club Name',
-                            clubNameValidator, Icons.groups_rounded),
-                        const SizedBox(height: 20.0),
-                        buildLongForm(descController, 'Club Description',
-                            clubDescValidator, MdiIcons.imageText),
-                        const SizedBox(height: 20.0),
-                        buildForm(emailController, 'Official Email',
-                            emailValidator, Icons.email_sharp),
-                        const SizedBox(height: 20.0),
-                        categoryDropDownButton('Club Category',
-                            Icons.category_sharp, category, categoryController),
-                        CheckboxListTile(
-                          contentPadding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                          dense: true,
-                          title: const Text(
-                            'Whoever register the Club will be the Chairman of the Club',
-                            style: TextStyle(color: Colors.black),
+    return StreamBuilder<List<function>>(
+        stream: AccessRightDatabaseService().functionlist,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            List<function>? functionList = snapshot.data;
+            return Scaffold(
+              backgroundColor: Colors.white,
+              appBar: buildAppBar(context, 'Club Registration'),
+              body: Center(
+                child: SingleChildScrollView(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 20.0, horizontal: 50.0),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          InkWell(
+                            onTap: () async {
+                              if (_imageFile == null) {
+                                final imageFile = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => clubLogo()),
+                                );
+                                setState(() {
+                                  _imageFile = imageFile;
+                                });
+                              } else {
+                                final imageFile = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          clubLogo(selectImage: _imageFile)),
+                                );
+                                setState(() {
+                                  _imageFile = imageFile;
+                                });
+                              }
+                            },
+                            child: Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(color: Colors.blue)),
+                                height: 200,
+                                child: _imageFile == null
+                                    ? const Center(
+                                        child: Text('No Image Selected'))
+                                    : Image.file(_imageFile!,
+                                        fit: BoxFit.fill)),
                           ),
-                          value: _checked,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              _checked = value!;
-                            });
-                          },
-                          controlAffinity: ListTileControlAffinity.leading,
-                        ),
-                        ElevatedButton(
-                          onPressed: () async {
-                            if (_imageFile == null) {
+                          Text(noImageSelect,
+                              style: const TextStyle(
+                                  color: Colors.red, fontSize: 14.0)),
+                          const SizedBox(height: 20.0),
+                          buildForm(nameController, 'Club Name',
+                              clubNameValidator, Icons.groups_rounded),
+                          const SizedBox(height: 20.0),
+                          buildLongForm(descController, 'Club Description',
+                              clubDescValidator, MdiIcons.imageText),
+                          const SizedBox(height: 20.0),
+                          buildForm(emailController, 'Official Email',
+                              emailValidator, Icons.email_sharp),
+                          const SizedBox(height: 20.0),
+                          categoryDropDownButton(
+                              'Club Category',
+                              Icons.category_sharp,
+                              category,
+                              categoryController),
+                          CheckboxListTile(
+                            contentPadding:
+                                const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            dense: true,
+                            title: const Text(
+                              'Whoever register the Club will be the Chairman of the Club',
+                              style: TextStyle(color: Colors.black),
+                            ),
+                            value: _checked,
+                            onChanged: (bool? value) {
                               setState(() {
-                                noImageSelect = 'Club Logo is required !';
+                                _checked = value!;
                               });
-                            } else {
-                              if (_formKey.currentState!.validate()) {
-                                if (_checked) {
-                                  setState(() => isLoading = true);
-                                  String registerDate =
-                                      DateFormat('dd-MMM-yyyy')
-                                          .format(DateTime.now());
-                                  ClubData clubData = ClubData(
-                                    club_name: nameController.text,
-                                    club_email: emailController.text,
-                                    club_desc: descController.text,
-                                    club_category: categoryController.text,
-                                    club_registerDate: registerDate,
-                                    club_chairman: user!.uid!,
-                                  );
-                                  dynamic result =
-                                      await ClubDatabaseService(uid: user.uid)
-                                          .createClubData(
-                                              clubData, _imageFile, context)
-                                          .whenComplete(() {
-                                    showSuccessSnackBar(
-                                        'Club Registered !', context);
-                                  }).catchError((e) => showFailedSnackBar(
-                                              e.toString(), context));
-                                  Navigator.of(context).pop();
-                                  if (result == null) {
-                                    setState(() {
-                                      error =
-                                          'Could not register a club, please try again';
-                                      isLoading = false;
-                                    });
+                            },
+                            controlAffinity: ListTileControlAffinity.leading,
+                          ),
+                          ElevatedButton(
+                            onPressed: () async {
+                              if (_imageFile == null) {
+                                setState(() {
+                                  noImageSelect = 'Club Logo is required !';
+                                });
+                              } else {
+                                if (_formKey.currentState!.validate()) {
+                                  if (_checked) {
+                                    setState(() => isLoading = true);
+                                    ClubData clubData = ClubData(
+                                      club_name: nameController.text,
+                                      club_email: emailController.text,
+                                      club_desc: descController.text,
+                                      club_category: categoryController.text,
+                                    );
+                                    dynamic result = await ClubDatabaseService(
+                                            uid: user!.uid)
+                                        .createClubData(clubData, _imageFile,
+                                            context, functionList)
+                                        .whenComplete(() {
+                                      Navigator.of(context).pop();
+                                      showSuccessSnackBar(
+                                          'Club Registered !', context);
+                                    }).catchError((e) => print(e));
+
+                                    if (result == null) {
+                                      setState(() {
+                                        error =
+                                            'Could not register a club, please try again';
+                                        isLoading = false;
+                                      });
+                                    }
+                                  } else {
+                                    showFailedSnackBar(
+                                        'Make sure you checked the acknowledgement',
+                                        context);
                                   }
-                                } else {
-                                  showFailedSnackBar(
-                                      'Make sure you checked the acknowledgement',
-                                      context);
                                 }
                               }
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            fixedSize: Size(
-                                MediaQuery.of(context).size.width * 0.8, 45),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20.0)),
+                            },
+                            style: ElevatedButton.styleFrom(
+                              fixedSize: Size(
+                                  MediaQuery.of(context).size.width * 0.8, 45),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0)),
+                            ),
+                            child: const Text(
+                              'Register',
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ),
-                          child: const Text(
-                            'Register',
-                            style: TextStyle(color: Colors.white),
+                          const SizedBox(height: 12.0),
+                          Text(
+                            error,
+                            style: const TextStyle(
+                                color: Colors.red, fontSize: 14.0),
                           ),
-                        ),
-                        const SizedBox(height: 12.0),
-                        Text(
-                          error,
-                          style: const TextStyle(
-                              color: Colors.red, fontSize: 14.0),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          );
+            );
+          } else {
+            return loadingIndicator();
+          }
+        });
   }
 
   TextFormField buildForm(TextEditingController controller, String hintText,

@@ -131,7 +131,7 @@ class _changeProfilePictureState extends State<changeProfilePicture> {
   ButtonStyle buildButtonStyle(BuildContext context) {
     return ElevatedButton.styleFrom(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-      minimumSize: Size(MediaQuery.of(context).size.width * 0.295, 50),
+      minimumSize: Size(MediaQuery.of(context).size.width * 0.27, 50),
     );
   }
 

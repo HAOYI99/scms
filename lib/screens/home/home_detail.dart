@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:scms/models/club.dart';
 import 'package:scms/models/event.dart';
@@ -50,6 +51,7 @@ class EventDetailState extends State<EventDetail> {
         : Scaffold(
             body: SingleChildScrollView(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Stack(
                     children: [
@@ -84,7 +86,51 @@ class EventDetailState extends State<EventDetail> {
                       ),
                     ],
                   ),
-                  Text('${widget.eventData.event_title}')
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'Organizer : ${widget.clubData.club_name}',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text('Contact Email : \n${widget.clubData.club_email}'),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      '${widget.eventData.event_title}',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text('Caption : \n${widget.eventData.event_caption}'),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text('Location : \n${widget.eventData.event_location}'),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                        'Event Date : \n${DateFormat('dd-MMM-yyyy').format(DateTime.parse(widget.eventData.event_start!))} - ${DateFormat('dd-MMM-yyyy').format(DateTime.parse(widget.eventData.event_end!))}'),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                        'Event Time : \n${DateFormat('HH-mm').format(DateTime.parse(widget.eventData.event_start!))} - ${DateFormat('HH-mm').format(DateTime.parse(widget.eventData.event_end!))}'),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text('Target Audience : \n${widget.eventData.event_audience}'),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text('Number of Audience : \n${widget.eventData.event_numAudience}'),
+                  ),
+                  SizedBox(height: 80)
                 ],
               ),
             ),

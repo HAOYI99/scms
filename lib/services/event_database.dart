@@ -59,7 +59,9 @@ class EventDatabaseService {
       'event_numAudience': eventData.event_numAudience,
       'event_poster': '',
       'club_ID': cid,
-    }).then((value) => uploadEventPost(image, buildContext, eventDocument.id));
+    }).then((value) async {
+      await uploadEventPost(image, buildContext, eventDocument.id);
+    });
   }
 
   Future updateEventData(
@@ -73,7 +75,9 @@ class EventDatabaseService {
         'event_end': eventData.event_end,
         'event_audience': eventData.event_audience,
         'event_numAudience': eventData.event_numAudience,
-      }).then((value) => uploadEventPost(image, buildContext, eid!));
+      }).then((value) async {
+        await uploadEventPost(image, buildContext, eid!);
+      });
     } else {
       return await eventCollection.doc(eid).update({
         'event_title': eventData.event_title,
@@ -118,7 +122,7 @@ class EventDatabaseService {
   }
 
   //registration.......................................................
-  
+
   final CollectionReference registerCollection =
       FirebaseFirestore.instance.collection('registers');
 
